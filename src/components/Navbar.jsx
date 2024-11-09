@@ -18,8 +18,8 @@ const Navbar = () => {
 
 	return (
 		<div
-			className={`sticky top-0 z-10 px-2 bg-${
-				theme === "dark" ? "gray-900" : "white"
+			className={`sticky top-0 z-10 px-2 ${
+				theme === "dark" ? "bg-gray-900" : "bg-white"
 			} shadow-md`}
 		>
 			<div className="container mx-auto p-4 flex items-center justify-between">
