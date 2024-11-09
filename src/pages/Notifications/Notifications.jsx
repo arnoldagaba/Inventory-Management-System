@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { FiSettings, FiBell, FiPackage } from "react-icons/fi";
-import
+import { Cog6ToothIcon, BellIcon, CubeIcon } from "@heroicons/react/24/outline";
 
 const NotificationsPage = () => {
 	const [filter, setFilter] = useState("All");
 	const [dateRange, setDateRange] = useState("Last 7 Days");
 	const [expandedNotification, setExpandedNotification] = useState(null);
-	
-    const notifications = [
+
+	const notifications = [
 		{
 			id: 1,
 			type: "System",
@@ -56,7 +55,7 @@ const NotificationsPage = () => {
 				<h2 className="text-2xl font-semibold">Notifications</h2>
 
 				<button className="text-gray-500 hover:text-gray-700">
-					<FiSettings size={24} />
+					<Cog6ToothIcon size={24} />
 				</button>
 			</div>
 
@@ -104,10 +103,10 @@ const NotificationsPage = () => {
 								<div className="flex items-center space-x-3">
 									<div className="text-xl">
 										{notification.type === "System" && (
-											<FiBell className="text-blue-500" />
+											<BellIcon className="text-blue-500" />
 										)}
 										{notification.type === "Stock" && (
-											<FiPackage className="text-yellow-500" />
+											<CubeIcon className="text-yellow-500" />
 										)}
 										{/* Add icons for other types */}
 									</div>
