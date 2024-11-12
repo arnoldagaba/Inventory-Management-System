@@ -25,7 +25,7 @@ const Navbar = () => {
 			<div className="container mx-auto p-4 flex items-center justify-between">
 				{/* Logo/Brand */}
 				<div className="text-2xl font-bold dark:text-white">
-					<Link to="/">IVM</Link>
+					<Link to="/">InvenEase</Link>
 				</div>
 
 				{/* Search Bar */}
