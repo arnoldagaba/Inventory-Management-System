@@ -8,8 +8,17 @@ import {
 	ShoppingBagIcon,
 	UsersIcon,
 } from "@heroicons/react/24/outline";
+import {
+	actions,
+	recentActivity,
+	salesData3,
+	stockData2,
+} from "../../constants/constants";
+import { useTheme } from "../../hooks/useTheme";
 
 const Dashboard = () => {
+	const { theme } = useTheme();
+
 	// Example data for charts and counters
 	const summaryData = [
 		{
@@ -38,24 +47,6 @@ const Dashboard = () => {
 		},
 	];
 
-	const salesData = [
-		{ month: "Jan", sales: 4000 },
-		{ month: "Feb", sales: 3000 },
-		{ month: "Mar", sales: 5000 },
-	];
-
-	const stockData = [
-		{ product: "A", stock: 200 },
-		{ product: "B", stock: 450 },
-		{ product: "C", stock: 300 },
-	];
-
-	const recentActivity = [
-		{ type: "Order", content: "New order #1234 created." },
-		{ type: "Stock", content: "Product B stock updated to 450." },
-		{ type: "Alert", content: "Low stock warning for Product A." },
-	];
-
 	const handleActionClick = (action) => {
 		toast.success(`${action} action completed!`);
 	};
@@ -67,11 +58,13 @@ const Dashboard = () => {
 				{summaryData.map((card, index) => (
 					<motion.div
 						key={index}
-						className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center space-y-2"
+						className="bg-white dark:bg-slate-700 dark:text-white p-4 rounded-lg shadow-md flex flex-col items-center space-y-2"
 						whileHover={{ scale: 1.05 }}
 					>
 						<span className="text-4xl">{card.icon}</span>
+
 						<h3 className="text-xl font-semibold">{card.title}</h3>
+
 						<CountUp
 							start={0}
 							end={card.value}
@@ -79,12 +72,13 @@ const Dashboard = () => {
 							separator=","
 							className="text-2xl font-bold"
 						/>
+
 						<LineChart width={100} height={30} data={card.trend}>
 							<Line
 								type="monotone"
 								dataKey="value"
-								stroke="#8884d8"
 								dot={false}
+								stroke={`${theme === "dark" ? "white" : "#8884d8"}`}
 								strokeWidth={2}
 							/>
 						</LineChart>
@@ -94,11 +88,11 @@ const Dashboard = () => {
 
 			{/* Quick Actions */}
 			<div className="flex space-x-4">
-				{["Add Order", "Update Stock"].map((action, index) => (
+				{actions.map((action, index) => (
 					<motion.button
 						key={index}
 						onClick={() => handleActionClick(action)}
-						className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md"
+						className="bg-blue-500 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md"
 						whileHover={{ scale: 1.1 }}
 					>
 						{action}
@@ -112,14 +106,17 @@ const Dashboard = () => {
 					initial={{ opacity: 0, x: -100 }}
 					animate={{ opacity: 1, x: 0 }}
 					transition={{ duration: 1 }}
-					className="bg-white p-4 rounded-lg shadow-md"
+					className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md"
 				>
-					<h3 className="text-lg font-semibold mb-2">Sales Trends</h3>
-					<LineChart width={400} height={200} data={salesData}>
+					<h3 className="text-lg font-semibold mb-2 dark:text-white">
+						Sales Trends
+					</h3>
+
+					<LineChart width={400} height={200} data={salesData3}>
 						<Line
 							type="monotone"
 							dataKey="sales"
-							stroke="#8884d8"
+							stroke={`${theme === "dark" ? "white" : "#8884d8"}`}
 							strokeWidth={3}
 						/>
 						<Tooltip />
@@ -130,10 +127,13 @@ const Dashboard = () => {
 					initial={{ opacity: 0, x: 100 }}
 					animate={{ opacity: 1, x: 0 }}
 					transition={{ duration: 1 }}
-					className="bg-white p-4 rounded-lg shadow-md"
+					className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md"
 				>
-					<h3 className="text-lg font-semibold mb-2">Stock Levels</h3>
-					<BarChart width={400} height={200} data={stockData}>
+					<h3 className="text-lg font-semibold mb-2 dark:text-white">
+						Stock Levels
+					</h3>
+
+					<BarChart width={400} height={200} data={stockData2}>
 						<Bar dataKey="stock" fill="#82ca9d" />
 						<Tooltip />
 					</BarChart>
@@ -141,8 +141,11 @@ const Dashboard = () => {
 			</div>
 
 			{/* Recent Activity Feed */}
-			<div className="bg-white p-4 rounded-lg shadow-md mt-6">
-				<h3 className="text-lg font-semibold mb-2">Recent Activity</h3>
+			<div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md mt-6">
+				<h3 className="text-lg font-semibold mb-2 dark:text-white">
+					Recent Activity
+				</h3>
+
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
@@ -151,11 +154,13 @@ const Dashboard = () => {
 					{recentActivity.map((activity, index) => (
 						<motion.div
 							key={index}
-							className="py-2 border-b last:border-b-0"
+							className="py-2 border-b last:border-b-0 dark:border-gray-400 dark:text-gray-200"
 							whileHover={{ scale: 1.02 }}
 							transition={{ duration: 0.2 }}
 						>
-							<span className="font-semibold">{activity.type}: </span>
+							<span className="font-semibold dark:text-white">
+								{activity.type}:{" "}
+							</span>
 							{activity.content}
 						</motion.div>
 					))}

@@ -3,10 +3,18 @@ import { motion } from "framer-motion";
 import { Dialog, Transition } from "@headlessui/react";
 import { CircleLoader } from "react-spinners";
 // import { FiFilter, FiArrowUp, FiArrowDown } from "react-icons/fi";
-import { FunnelIcon, ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
+import {
+	FunnelIcon,
+	ArrowUpIcon,
+	ArrowDownIcon,
+	ArrowRightIcon,
+	ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
+import { headers, orders } from "../../constants/constants";
+import { formatNumberWithComma } from "../../utils/formatNumber";
 
-const OrdersPage = () => {
+const Orders = () => {
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [sortOrder, setSortOrder] = useState({
@@ -15,30 +23,6 @@ const OrdersPage = () => {
 	});
 	const [loading, setLoading] = useState(false);
 	const [filters, setFilters] = useState([]);
-
-	const orders = [
-		{
-			id: "001",
-			customer: "Alice",
-			status: "Shipped",
-			date: "2024-11-08",
-			amount: "$100.00",
-		},
-		{
-			id: "002",
-			customer: "Bob",
-			status: "Pending",
-			date: "2024-11-07",
-			amount: "$50.00",
-		},
-		{
-			id: "003",
-			customer: "Charlie",
-			status: "Cancelled",
-			date: "2024-11-06",
-			amount: "$75.00",
-		},
-	];
 
 	const handleRowClick = (order) => {
 		setSelectedOrder(order);
@@ -67,24 +51,25 @@ const OrdersPage = () => {
 				<input
 					type="text"
 					placeholder="Search Orders..."
-					className="px-4 py-2 border rounded-lg w-1/2"
+					className="px-4 py-2 border rounded-lg w-1/2 dark:placeholder:text-slate-50 dark:bg-slate-800"
 				/>
+
 				<div className="flex space-x-2">
 					<button
 						onClick={() => applyFilter("Shipped")}
-						className="bg-blue-500 text-white px-3 py-1 rounded-full"
+						className="bg-blue-500 dark:bg-blue-700 text-white px-3 py-1 rounded-full"
 					>
 						Shipped
 					</button>
 					<button
 						onClick={() => applyFilter("Pending")}
-						className="bg-yellow-500 text-white px-3 py-1 rounded-full"
+						className="bg-yellow-500 dark:bg-yellow-700 text-white px-3 py-1 rounded-full"
 					>
 						Pending
 					</button>
 					<button
 						onClick={() => applyFilter("Cancelled")}
-						className="bg-red-500 text-white px-3 py-1 rounded-full"
+						className="bg-red-500 dark:bg-red-700 text-white px-3 py-1 rounded-full"
 					>
 						Cancelled
 					</button>
@@ -105,61 +90,59 @@ const OrdersPage = () => {
 
 			{/* Order Table */}
 			<div className="bg-white rounded-lg shadow-md overflow-hidden">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
+				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-400">
+					<thead className="bg-gray-50 dark:bg-slate-700">
 						<tr>
-							{["Order ID", "Customer", "Status", "Date", "Amount"].map(
-								(column) => (
-									<th
-										key={column}
-										onClick={() => toggleSortOrder(column.toLowerCase())}
-										className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-									>
-										{column}
-										{sortOrder.column === column.toLowerCase() && (
-											<span>
-												{sortOrder.direction === "asc" ? (
-                                                    <ArrowUpIcon className="h-4 w-4" />
-												) : (
-                                                    <ArrowDownIcon className="h-4 w-4" />
-												)}
-											</span>
-										)}
-									</th>
-								)
-							)}
+							{headers.map((column) => (
+								<th
+									key={column}
+									onClick={() => toggleSortOrder(column.toLowerCase())}
+									className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider cursor-pointer"
+								>
+									{column}
+									{sortOrder.column === column.toLowerCase() && (
+										<span>
+											{sortOrder.direction === "asc" ? (
+												<ArrowUpIcon className="h-4 w-4" />
+											) : (
+												<ArrowDownIcon className="h-4 w-4" />
+											)}
+										</span>
+									)}
+								</th>
+							))}
 						</tr>
 					</thead>
 
-					<tbody className="bg-white divide-y divide-gray-200">
+					<tbody className="bg-white dark:bg-slate-600 divide-y divide-gray-200 dark:divide-gray-500">
 						{loading ? (
 							<tr>
 								<td colSpan="5" className="text-center py-8">
-									<CircleLoader size={40} />
+									<CircleLoader className="w-10 h-10" />
 								</td>
 							</tr>
 						) : (
 							orders.map((order) => (
 								<motion.tr
 									key={order.id}
-									className="hover:bg-gray-100 cursor-pointer"
+									className="hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
 									onClick={() => handleRowClick(order)}
 									whileHover={{ scale: 1.02 }}
 								>
-									<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+									<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300 dark:font-bold">
 										{order.id}
 									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
 										{order.customer}
 									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
 										{order.status}
 									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
 										{order.date}
 									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-										{order.amount}
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
+										UGX {formatNumberWithComma(order.amount)}
 									</td>
 								</motion.tr>
 							))
@@ -170,11 +153,11 @@ const OrdersPage = () => {
 
 			{/* Pagination */}
 			<div className="flex justify-end py-2">
-				<button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md mr-2">
-					Previous
+				<button className="bg-gray-300 dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 rounded-md mr-2">
+					<ArrowLeftIcon className="w-4 h-4" />
 				</button>
-				<button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md">
-					Next
+				<button className="bg-gray-300 dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 rounded-md">
+					<ArrowRightIcon className="w-4 h-4" />
 				</button>
 			</div>
 
@@ -206,7 +189,8 @@ const OrdersPage = () => {
 									<strong>Date:</strong> {selectedOrder?.date}
 								</p>
 								<p>
-									<strong>Amount:</strong> {selectedOrder?.amount}
+									<strong>Amount:</strong>{" "}
+									{formatNumberWithComma(selectedOrder?.amount)}
 								</p>
 								<div className="flex space-x-4 mt-4">
 									<button
@@ -231,4 +215,4 @@ const OrdersPage = () => {
 	);
 };
 
-export default OrdersPage;
+export default Orders;

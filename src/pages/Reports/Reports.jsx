@@ -14,28 +14,29 @@ import {
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import { CloudArrowDownIcon } from "@heroicons/react/24/outline";
+import { duration, reports, salesData } from "../../constants/constants";
+import { formatNumberWithComma } from "../../utils/formatNumber";
+import { useTheme } from "../../hooks/useTheme";
 
 const Reports = () => {
+	const { theme } = useTheme();
+
 	const [reportType, setReportType] = useState("Sales");
 	const [dateRange, setDateRange] = useState("Last 30 Days");
 	const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 	const [dataPreview, setDataPreview] = useState("table"); // 'table' or 'chart'
 
-	const salesData = [
-		{ date: "2024-11-01", amount: 200 },
-		{ date: "2024-11-02", amount: 300 },
-		{ date: "2024-11-03", amount: 250 },
-	];
-
 	const generateReport = () => {
 		toast.success(`Generating ${reportType} report for ${dateRange}`);
-		// Placeholder function for report generation logic
+		// Placeholder function for TODO: report generation logic
 	};
 
 	const exportReport = (format) => {
 		toast.info(`Exporting report as ${format}`);
 		// Placeholder export logic, can use libraries like json2csv for CSV export or pdfmake for PDF
+		// TODO: Add more formats
 		if (format === "CSV") {
+			// TODO: Try to fix this logic
 			const blob = new Blob([JSON.stringify(salesData)], {
 				type: "text/csv;charset=utf-8;",
 			});
@@ -49,31 +50,37 @@ const Reports = () => {
 			<div className="flex items-center space-x-4 mb-4">
 				<select
 					onChange={(e) => setReportType(e.target.value)}
-					className="px-4 py-2 border rounded-lg"
+					className="px-4 py-2 border rounded-lg outline-none dark:text-white dark:bg-slate-700"
 				>
-					<option value="Sales">Sales</option>
-					<option value="Inventory">Inventory</option>
+					{reports.map((report) => (
+						<option key={report} value={report}>
+							{report}
+						</option>
+					))}
 				</select>
 
 				<select
 					onChange={(e) => setDateRange(e.target.value)}
-					className="px-4 py-2 border rounded-lg"
+					className="px-4 py-2 border rounded-lg outline-none dark:text-white dark:bg-slate-700"
 				>
-					<option value="Last 7 Days">Last 7 Days</option>
-					<option value="Last 30 Days">Last 30 Days</option>
-					<option value="Last 90 Days">Last 90 Days</option>
+					{/*TODO: Find a way of adding the chosen date range to the toast notification */}
+					{duration.map((duration) => (
+						<option key={duration} value="duration">
+							Last {duration} days
+						</option>
+					))}
 				</select>
 
 				<button
 					onClick={generateReport}
-					className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md"
+					className="bg-blue-500 dark:bg-blue-900 text-white px-4 py-2 rounded-md shadow-md"
 				>
 					Generate Report
 				</button>
 
 				<button
 					onClick={() => exportReport("PDF")}
-					className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md flex items-center space-x-2"
+					className="bg-red-500 dark:bg-red-700 text-white px-4 py-2 rounded-md shadow-md flex items-center space-x-2"
 				>
 					<CloudArrowDownIcon /> <span>Download PDF</span>
 				</button>
@@ -81,12 +88,16 @@ const Reports = () => {
 
 			{/* Main Section: Report Preview */}
 			<div className="flex justify-between items-center mb-4">
-				<h3 className="text-lg font-semibold">{reportType} Report Preview</h3>
+				<h3 className="text-lg font-semibold dark:text-white">
+					{reportType} Report Preview
+				</h3>
 				<div className="flex space-x-4">
 					<button
 						onClick={() => setDataPreview("table")}
 						className={`${
-							dataPreview === "table" ? "text-blue-500" : "text-gray-500"
+							dataPreview === "table"
+								? "text-blue-700 dark:text-white"
+								: "text-gray-600/75 dark:text-gray-400"
 						}`}
 					>
 						Table View
@@ -95,7 +106,9 @@ const Reports = () => {
 					<button
 						onClick={() => setDataPreview("chart")}
 						className={`${
-							dataPreview === "chart" ? "text-blue-500" : "text-gray-500"
+							dataPreview === "chart"
+								? "text-blue-700 dark:text-white"
+								: "text-gray-600/75 dark:text-gray-400"
 						}`}
 					>
 						Chart View
@@ -103,28 +116,32 @@ const Reports = () => {
 				</div>
 			</div>
 
+			{/* TODO: Find a way of changing the data when a some chooses inventory data instead of sales data */}
 			{dataPreview === "table" ? (
-				<div className="bg-white rounded-lg shadow-md overflow-hidden">
-					<table className="min-w-full divide-y divide-gray-200">
-						<thead className="bg-gray-50">
+				<div className="rounded-lg shadow-md overflow-hidden">
+					<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
+						<thead className="bg-gray-50 dark:bg-gray-600">
 							<tr>
-								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
 									Date
 								</th>
-								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">
 									Amount
 								</th>
 							</tr>
 						</thead>
 
-						<tbody className="bg-white divide-y divide-gray-200">
+						<tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-500">
 							{salesData.map((item, index) => (
-								<tr key={index} className="hover:bg-gray-50">
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+								<tr
+									key={index}
+									className="hover:bg-gray-50 dark:hover:bg-gray-500"
+								>
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
 										{item.date}
 									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-										${item.amount}
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+										UGX {formatNumberWithComma(item.amount)}
 									</td>
 								</tr>
 							))}
@@ -132,16 +149,19 @@ const Reports = () => {
 					</table>
 				</div>
 			) : (
-				<div className="bg-white rounded-lg shadow-md p-4">
+				<div className="bg-white dark:bg-gray-500 rounded-lg shadow-md p-4">
 					<ResponsiveContainer width="100%" height={300}>
 						<LineChart data={salesData}>
-							<XAxis dataKey="date" />
-							<YAxis />
+							<XAxis
+								dataKey="date"
+								stroke={theme === "dark" ? "white" : "black"}
+							/>
+							<YAxis stroke={theme === "dark" ? "white" : "black"} />
 							<Tooltip />
 							<Line
 								type="monotone"
 								dataKey="amount"
-								stroke="#4f46e5"
+								stroke={theme === "dark" ? "white" : "black"}
 								strokeWidth={2}
 							/>
 						</LineChart>
@@ -167,6 +187,7 @@ const Reports = () => {
 			</div>
 
 			{/* Custom Report Generator Sidebar */}
+			{/* TODO: Find a way of creating the reports basing on the chosen data */}
 			<Transition show={isFilterPanelOpen} as={React.Fragment}>
 				<Dialog
 					as="div"

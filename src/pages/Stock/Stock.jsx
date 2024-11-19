@@ -11,41 +11,13 @@ import {
 	ResponsiveContainer,
 } from "recharts";
 import { CubeIcon } from "@heroicons/react/24/outline";
+import { products, stockData } from "../../constants/constants";
+import { useTheme } from "../../hooks/useTheme";
 
-const StockPage = () => {
+const Stock = () => {
+	const { theme } = useTheme();
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
-	const stockData = [
-		{ name: "Nov 1", stock: 20 },
-		{ name: "Nov 2", stock: 15 },
-		{ name: "Nov 3", stock: 10 },
-		{ name: "Nov 4", stock: 5 },
-		{ name: "Nov 5", stock: 8 },
-	];
-
-	const products = [
-		{
-			id: "p001",
-			name: "Product 1",
-			stock: 5,
-			minThreshold: 10,
-			supplier: "Supplier A",
-		},
-		{
-			id: "p002",
-			name: "Product 2",
-			stock: 50,
-			minThreshold: 20,
-			supplier: "Supplier B",
-		},
-		{
-			id: "p003",
-			name: "Product 3",
-			stock: 8,
-			minThreshold: 15,
-			supplier: "Supplier C",
-		},
-	];
 
 	const handleRestockClick = (product) => {
 		setSelectedProduct(product);
@@ -63,26 +35,32 @@ const StockPage = () => {
 		<div className="p-4 space-y-6">
 			{/* Header: Low Stock Alerts */}
 			<div className="flex items-center space-x-4 mb-4">
+				{/*  TODO: Maybe these function of this button should be changed */}
 				{products
 					.filter((p) => p.stock < p.minThreshold)
 					.map((product) => (
 						<button
 							key={product.id}
 							onClick={() => triggerLowStockAlert(product)}
-							className="bg-red-500 text-white px-4 py-2 rounded-md"
+							className="bg-red-600 dark:bg-red-700 text-white px-4 py-2 rounded-md"
 						>
-							{product.name}: Low Stock - Restock Now
+							{product.name}: Low on Stock - Restock Now
 						</button>
 					))}
 			</div>
 
 			{/* Main Section: Inventory Chart */}
-			<div className="bg-white rounded-lg shadow-md p-4">
-				<h3 className="text-lg font-semibold mb-2">Inventory Trends</h3>
+			<div className="bg-white dark:bg-slate-700 rounded-lg shadow-md p-4">
+				<h3 className="text-lg font-semibold mb-2 dark:text-white">
+					Inventory Trends
+				</h3>
 				<ResponsiveContainer width="100%" height={300}>
 					<BarChart data={stockData}>
-						<XAxis dataKey="name" />
-						<YAxis />
+						<XAxis
+							dataKey="name"
+							stroke={theme === "dark" ? "white" : "black"}
+						/>
+						<YAxis stroke={theme === "dark" ? "white" : "black"} />
 						<Tooltip />
 						<Bar dataKey="stock" fill="#4f46e5" />
 					</BarChart>
@@ -91,49 +69,55 @@ const StockPage = () => {
 
 			{/* Stock Table */}
 			<div className="bg-white rounded-lg shadow-md overflow-hidden mt-6">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
+				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
+					<thead className="bg-gray-50 dark:bg-slate-500">
 						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
 								Product
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
 								Stock
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
 								Supplier
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
 								Actions
 							</th>
 						</tr>
 					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
+
+					<tbody className="bg-white dark:bg-slate-700  divide-y divide-gray-200 dark:divide-gray-500">
 						{products.map((product) => (
 							<tr
 								key={product.id}
 								className={`${
-									product.stock < product.minThreshold ? "bg-red-50" : ""
-								}`}
+									product.stock < product.minThreshold
+										? "bg-red-50 dark:bg-inherit"
+										: ""
+								} `}
 							>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
 									{product.name}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+
+								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
 									{product.stock}
 									{product.stock < product.minThreshold && (
-										<span className="ml-2 inline-block px-2 py-1 text-xs font-semibold text-red-700 bg-red-200 rounded-full animate-pulse">
+										<span className="ml-2 inline-block px-2 py-1 text-xs font-semibold text-red-700 dark:text-red-800 bg-red-200 dark:bg-red-300 rounded-full animate-pulse">
 											Low
 										</span>
 									)}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
 									{product.supplier}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
 									<button
 										onClick={() => handleRestockClick(product)}
-										className="text-blue-500 hover:underline"
+										className="text-blue-400 hover:underline"
 									>
 										Restock
 									</button>
@@ -226,4 +210,4 @@ const StockPage = () => {
 	);
 };
 
-export default StockPage;
+export default Stock;

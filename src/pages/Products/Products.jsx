@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import {
 	Description,
 	Dialog,
@@ -6,45 +6,20 @@ import {
 	Transition,
 } from "@headlessui/react";
 import {
-  TableCellsIcon,
+	TableCellsIcon,
 	ListBulletIcon,
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import { category, products2 } from "../../constants/constants";
+import { formatNumberWithComma } from "../../utils/formatNumber";
 
 const ProductsPage = () => {
 	const [isGridView, setIsGridView] = useState(true);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const products = [
-		{
-			id: "p001",
-			name: "Product 1",
-			price: 29.99,
-			stock: 50,
-			category: "Electronics",
-			image: "https://source.unsplash.com/random/150x150?electronics",
-		},
-		{
-			id: "p002",
-			name: "Product 2",
-			price: 19.99,
-			stock: 0,
-			category: "Books",
-			image: "https://source.unsplash.com/random/150x150?books",
-		},
-		{
-			id: "p003",
-			name: "Product 3",
-			price: 59.99,
-			stock: 20,
-			category: "Apparel",
-			image: "https://source.unsplash.com/random/150x150?apparel",
-		},
-	];
 
 	const handleProductClick = (product) => {
 		setSelectedProduct(product);
@@ -56,38 +31,41 @@ const ProductsPage = () => {
 	};
 
 	return (
+		// TODO: Implement search, filter and sorting filters
 		<div className="p-4 space-y-6">
 			{/* Header: Search, Filters, Sorting */}
 			<div className="flex items-center space-x-4 mb-4">
 				<input
 					type="text"
 					placeholder="Search Products..."
-					className="px-4 py-2 border rounded-lg w-1/2"
+					className="px-4 py-2 border rounded-lg w-1/2 dark:placeholder:text-gray-100 dark:text-white dark:bg-gray-700 outline-none"
 				/>
 
-				<select className="px-4 py-2 border rounded-lg cursor-pointer">
-					<option value="">Category</option>
-					<option value="Electronics">Electronics</option>
-					<option value="Books">Books</option>
-					<option value="Apparel">Apparel</option>
+				<select className="px-4 py-2 border rounded-lg cursor-pointer outline-none dark:text-white dark:bg-slate-700">
+					{category.map((category) => (
+						<option key={category.value} value={category.value}>
+							{category.name}
+						</option>
+					))}
 				</select>
 
 				<div className="flex items-center space-x-2">
-					<label>Price Range:</label>
+					<label className="dark:text-white">Price Range:</label>
+
 					<input
 						type="number"
 						placeholder="Min"
-						className="px-2 py-1 border rounded-lg w-20"
+						className="px-2 py-1 border rounded-lg w-20 dark:placeholder:text-gray-200 dark:bg-slate-700"
 					/>
 
 					<input
 						type="number"
 						placeholder="Max"
-						className="px-2 py-1 border rounded-lg w-20"
+						className="px-2 py-1 border rounded-lg w-20 dark:placeholder:text-gray-200 dark:bg-slate-700"
 					/>
 				</div>
 
-				<select className="px-4 py-2 border rounded-lg">
+				<select className="px-4 py-2 border rounded-lg dark:text-white dark:bg-slate-700">
 					<option value="low-to-high">Price: Low to High</option>
 					<option value="high-to-low">Price: High to Low</option>
 				</select>
@@ -95,14 +73,18 @@ const ProductsPage = () => {
 				<div className="flex items-center space-x-2 ml-auto">
 					<button
 						onClick={() => setIsGridView(true)}
-						className={`${isGridView ? "text-blue-500" : "text-gray-500"}`}
+						className={`${
+							isGridView ? "text-blue-500 dark:text-blue-400" : "text-gray-500"
+						}`}
 					>
 						<TableCellsIcon className="h-6 w-6" />
 					</button>
 
 					<button
 						onClick={() => setIsGridView(false)}
-						className={`${!isGridView ? "text-blue-500" : "text-gray-500"}`}
+						className={`${
+							!isGridView ? "text-blue-500 dark:text-blue-400" : "text-gray-500"
+						}`}
 					>
 						<ListBulletIcon className="h-6 w-6" />
 					</button>
@@ -115,11 +97,11 @@ const ProductsPage = () => {
 					isGridView ? "grid-cols-1 md:grid-cols-3 gap-4" : "space-y-4"
 				}`}
 			>
-				{products.map((product, index) => (
+				{products2.map((product, index) => (
 					<motion.div
 						key={product.id}
 						onClick={() => handleProductClick(product)}
-						className={`p-4 bg-white rounded-lg shadow-md cursor-pointer ${
+						className={`p-4 bg-white dark:bg-slate-700 dark:text-white rounded-lg shadow-md cursor-pointer ${
 							isGridView ? "" : "flex items-center"
 						}`}
 						whileHover={{ scale: 1.03 }}
@@ -139,10 +121,12 @@ const ProductsPage = () => {
 
 						<div className={`${isGridView ? "text-center" : ""} space-y-2`}>
 							<h3 className="text-lg font-semibold">{product.name}</h3>
-							<p className="text-sm text-gray-500">{product.category}</p>
-							<p className="text-lg font-bold">${product.price.toFixed(2)}</p>
+							<p className="text-sm text-gray-300">{product.category}</p>
+							<p className="text-lg font-bold">
+								UGX {formatNumberWithComma(product.price)}
+							</p>
 							<p
-								className={`text-sm ${
+								className={`text-sm font-semibold ${
 									product.stock > 0 ? "text-green-500" : "text-red-500"
 								}`}
 							>
@@ -178,8 +162,9 @@ const ProductsPage = () => {
 				))}
 			</div>
 
+			{/*  TODO: Fix the modal */}
 			{/* Product Detail Modal */}
-			<Transition show={isModalOpen} as={React.Fragment}>
+			<Transition show={isModalOpen} as={Fragment}>
 				<Dialog
 					as="div"
 					className="fixed inset-0 z-10 overflow-y-auto"
@@ -216,14 +201,14 @@ const ProductsPage = () => {
 
 							<div className="flex items-center justify-between">
 								<p className="text-lg font-bold">
-									${selectedProduct?.price.toFixed(2)}
+									UGX {formatNumberWithComma(selectedProduct?.price)}
 								</p>
 
 								<p
 									className={`text-sm ${
 										selectedProduct?.stock > 0
-											? "text-green-500"
-											: "text-red-500"
+											? "text-green-700"
+											: "text-red-700"
 									}`}
 								>
 									{selectedProduct?.stock > 0
@@ -235,14 +220,14 @@ const ProductsPage = () => {
 							<div className="flex justify-end space-x-4 mt-4">
 								<button
 									onClick={() => toast.info("Editing Product...")}
-									className="bg-blue-500 text-white px-4 py-2 rounded-md"
+									className="bg-blue-700 text-white px-4 py-2 rounded-md"
 								>
 									Edit
 								</button>
 
 								<button
 									onClick={() => toast.success("Stock updated!")}
-									className="bg-green-500 text-white px-4 py-2 rounded-md"
+									className="bg-green-700 text-white px-4 py-2 rounded-md"
 								>
 									Update Stock
 								</button>

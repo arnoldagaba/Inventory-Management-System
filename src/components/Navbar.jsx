@@ -44,7 +44,7 @@ const Navbar = () => {
 
 				{/* Theme Toggle, Notifications, Profile */}
 				<div className="flex items-center space-x-4">
-					<button onClick={toggleTheme} className="p-2">
+					<button onClick={toggleTheme} className="p-2 outline-none">
 						{theme === "dark" ? (
 							<SunIcon className="h-6 w-6 text-yellow-400" />
 						) : (
