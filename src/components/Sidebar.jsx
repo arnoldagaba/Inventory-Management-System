@@ -1,107 +1,66 @@
-import { Disclosure, DisclosureButton } from "@headlessui/react";
 import { NavLink } from "react-router-dom";
-import { useTheme } from "../hooks/useTheme";
+import { motion } from "framer-motion";
 import {
-	ChevronDoubleLeftIcon,
-	ChevronDoubleRightIcon,
 	HomeIcon,
-	WrenchScrewdriverIcon,
-	PresentationChartBarIcon,
-	ChartPieIcon,
 	ShoppingBagIcon,
-	FolderIcon,
 	CubeIcon,
+	ChartPieIcon,
+	Cog6ToothIcon,
+	XMarkIcon
 } from "@heroicons/react/24/outline";
+import PropTypes from "prop-types";
 
-const Sidebar = () => {
-	const { theme } = useTheme();
+const navItems = [
+	{ name: "Dashboard", path: "/", icon: HomeIcon },
+	{ name: "Orders", path: "/orders", icon: ShoppingBagIcon },
+	{ name: "Products", path: "/products", icon: CubeIcon },
+	{ name: "Analytics", path: "/analytics", icon: ChartPieIcon },
+	{ name: "Settings", path: "/settings", icon: Cog6ToothIcon },
+];
 
-	const themeStyles = {
-		bg: theme === "dark" ? "bg-gray-950" : "bg-gray-200",
-		text: theme === "dark" ? "text-white" : "text-gray-800",
-		hover: theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-300",
-		icon: theme === "dark" ? "text-white" : "text-blue-800",
-	};
-
-	const navItems = [
-		{
-			name: "Dashboard",
-			path: "/",
-			icon: <HomeIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-		{
-			name: "Orders",
-			path: "/orders",
-			icon: <ShoppingBagIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-		{
-			name: "Products",
-			path: "/products",
-			icon: <CubeIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-		{
-			name: "Stock",
-			path: "/stock",
-			icon: <ChartPieIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-		{
-			name: "Analytics",
-			path: "/analytics",
-			icon: (
-				<PresentationChartBarIcon className={`size-6 ${themeStyles.icon}`} />
-			),
-		},
-		{
-			name: "Reports",
-			path: "/reports",
-			icon: <FolderIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-		{
-			name: "Settings",
-			path: "/settings",
-			icon: <WrenchScrewdriverIcon className={`size-6 ${themeStyles.icon}`} />,
-		},
-	];
-
+const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	return (
-		<Disclosure defaultOpen>
-			{({ open }) => (
-				<div
-					className={`${themeStyles.bg} ${
-						themeStyles.text
-					} h-full transition-all duration-200 ${
-						open ? "w-48" : "w-16"
-					} flex flex-col`}
-				>
-					<DisclosureButton className={`p-2 mt-4 ml-4 rounded-full`}>
-						<span className="sr-only">Toggle Sidebar</span>
-						{open ? (
-							<ChevronDoubleLeftIcon className="size-6 text-blue-800 dark:text-white" />
-						) : (
-							<ChevronDoubleRightIcon className="size-6 text-blue-800 dark:text-white" />
-						)}
-					</DisclosureButton>
-
-					{/* Sidebar Links */}
-					<div className="mt-8 px-3">
-						<ul className="space-y-2">
-							{navItems.map(({ name, path, icon }) => (
+		<motion.aside
+			initial={isMobile ? { x: -240 } : false}
+			animate={isMobile ? { x: isMobileMenuOpen ? 0 : -240 } : false}
+			transition={{ duration: 0.2 }}
+			className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-60 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40
+				${isMobile ? "shadow-lg" : ""}`}
+		>
+			<nav className="h-full p-4">
+				<ul className="space-y-2">
+					{navItems.map((item) => {
+						const Icon = item.icon;
+						return (
+							<li key={item.name}>
 								<NavLink
-									key={name}
-									to={path}
-									className={`flex items-center space-x-3 p-3 rounded-full ${themeStyles.hover}`}
-									
+									to={item.path}
+									onClick={() => isMobile && setIsMobileMenuOpen(false)}
+									className={({ isActive }) =>
+										`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors
+										${
+											isActive
+												? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+												: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+										}`
+									}
 								>
-									{icon}
-									{open && <span>{name}</span>}
+									<Icon className="h-5 w-5" />
+									<span>{item.name}</span>
 								</NavLink>
-							))}
-						</ul>
-					</div>
-				</div>
-			)}
-		</Disclosure>
+							</li>
+						);
+					})}
+				</ul>
+			</nav>
+		</motion.aside>
 	);
+};
+
+Sidebar.propTypes = {
+	isMobileMenuOpen: PropTypes.bool.isRequired,
+	setIsMobileMenuOpen: PropTypes.func.isRequired,
+	isMobile: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

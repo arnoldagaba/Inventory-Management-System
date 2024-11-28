@@ -1,117 +1,190 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useTheme } from "../hooks/useTheme";
+import { motion } from "framer-motion";
 import {
-	BellIcon,
+	Bars3Icon,
 	MagnifyingGlassIcon,
-	MoonIcon,
-	SunIcon,
-	UserIcon,
+	BellIcon,
+	UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Button } from "./ui";
+import { useAuth } from "../context/AuthContext";
+import { useSearch } from "../context/SearchContext";
+import { useTheme } from "../hooks/useTheme";
+import PropTypes from "prop-types";
 
-const Navbar = () => {
-	const [searchQuery, setSearchQuery] = useState("");
-	const { theme, toggleTheme } = useTheme();
-
-	const handleSearchChange = (e) => setSearchQuery(e.target.value);
+const SearchResults = ({ results, onSelect, onClose }) => {
+	if (results.length === 0) return null;
 
 	return (
-		<div
-			className={`sticky top-0 z-10 px-2 ${
-				theme === "dark" ? "bg-gray-900" : "bg-white"
-			} shadow-md`}
+		<motion.div
+			initial={{ opacity: 0, y: -10 }}
+			animate={{ opacity: 1, y: 0 }}
+			className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-64 overflow-y-auto"
 		>
-			<div className="container mx-auto p-4 flex items-center justify-between">
-				{/* Logo/Brand */}
-				<div className="text-2xl font-bold dark:text-white">
-					<Link to="/">InvenEase</Link>
+			{results.map((result) => (
+				<button
+					key={`${result.type}-${result.id}`}
+					className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+					onClick={() => {
+						onSelect(result);
+						onClose();
+					}}
+				>
+					<p className="text-sm font-medium text-gray-900 dark:text-white">
+						{result.title}
+					</p>
+					<p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+						{result.type}
+					</p>
+				</button>
+			))}
+		</motion.div>
+	);
+};
+
+SearchResults.propTypes = {
+	results: PropTypes.arrayOf(
+		PropTypes.shape({
+			type: PropTypes.string.isRequired,
+			id: PropTypes.string.isRequired,
+			title: PropTypes.string.isRequired,
+		})
+	).isRequired,
+	onSelect: PropTypes.func.isRequired,
+	onClose: PropTypes.func.isRequired,
+};
+
+const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
+	const { currentUser, logout } = useAuth();
+	const { theme, toggleTheme } = useTheme();
+	const { searchQuery, searchResults, handleSearch, clearSearch } = useSearch();
+	const [isSearchFocused, setIsSearchFocused] = useState(false);
+	const [showUserMenu, setShowUserMenu] = useState(false);
+
+	const handleSearchChange = (e) => {
+		handleSearch(e.target.value);
+	};
+
+	const handleSearchResultSelect = (result) => {
+		clearSearch();
+		// Handle navigation based on result type
+		console.log("Selected:", result);
+	};
+
+	return (
+		<nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50">
+			<div className="h-full px-4 flex items-center justify-between">
+				{/* Left section */}
+				<div className="flex items-center gap-4">
+					{isMobile && (
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+							className="lg:hidden"
+						>
+							<Bars3Icon className="h-6 w-6" />
+						</Button>
+					)}
+
+					<Link to="/" className="flex items-center space-x-2">
+						<img src="/logo.svg" alt="Logo" className="h-8 w-8" />
+						<span className="text-xl font-semibold text-gray-900 dark:text-white hidden sm:inline-block">
+							Dashboard
+						</span>
+					</Link>
 				</div>
 
-				{/* Search Bar */}
-				<div className="flex items-center w-1/3">
-					<input
-						type="text"
-						value={searchQuery}
-						onChange={handleSearchChange}
-						placeholder="Search..."
-						className="w-full py-2 px-3 rounded-l-full border border-gray-300 dark:placeholder:text-black outline-none"
-					/>
-					<button className="py-[11px] px-3 bg-blue-900 text-white rounded-r-full">
-						<MagnifyingGlassIcon className="h-5 w-5 text-white" />
-					</button>
+				{/* Center section - Search */}
+				<div className="hidden md:block flex-1 max-w-xl mx-4 relative">
+					<div className="relative">
+						<MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+						<input
+							type="text"
+							placeholder="Search..."
+							value={searchQuery}
+							onChange={handleSearchChange}
+							onFocus={() => setIsSearchFocused(true)}
+							onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+							className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+
+					{isSearchFocused && searchResults.length > 0 && (
+						<SearchResults
+							results={searchResults}
+							onSelect={handleSearchResultSelect}
+							onClose={() => setIsSearchFocused(false)}
+						/>
+					)}
 				</div>
 
-				{/* Theme Toggle, Notifications, Profile */}
+				{/* Right section */}
 				<div className="flex items-center space-x-4">
-					<button onClick={toggleTheme} className="p-2 outline-none">
-						{theme === "dark" ? (
-							<SunIcon className="h-6 w-6 text-yellow-400" />
-						) : (
-							<MoonIcon className="h-6 w-6 text-blue-800" />
-						)}
-					</button>
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={toggleTheme}
+						className="hidden sm:flex"
+					>
+						{theme === "dark" ? "🌞" : "🌙"}
+					</Button>
 
-					{/* Notifications Dropdown */}
-					<Menu as="div" className="relative">
-						<MenuButton className="relative p-2">
-							<BellIcon className="h-6 w-6 text-blue-800 dark:text-white" />
-							<span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
-								10
-							</span>
-						</MenuButton>
+					<Button variant="ghost" size="icon">
+						<BellIcon className="h-5 w-5" />
+					</Button>
 
-						<MenuItems className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
-							<MenuItem>
-								{({ active }) => (
+					<div className="relative">
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => setShowUserMenu(!showUserMenu)}
+						>
+							<UserCircleIcon className="h-6 w-6" />
+						</Button>
+
+						{showUserMenu && (
+							<motion.div
+								initial={{ opacity: 0, y: -10 }}
+								animate={{ opacity: 1, y: 0 }}
+								className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
+							>
+								<div className="p-3 border-b border-gray-200 dark:border-gray-700">
+									<p className="text-sm font-medium text-gray-900 dark:text-white">
+										{currentUser?.displayName}
+									</p>
+									<p className="text-xs text-gray-500 dark:text-gray-400">
+										{currentUser?.email}
+									</p>
+								</div>
+								<div className="p-2">
 									<Link
-										to="/notifications"
-										className={`block px-4 py-2 ${active ? "bg-gray-100" : ""}`}
+										to="/settings"
+										className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
 									>
-										View all notifications
+										Settings
 									</Link>
-								)}
-							</MenuItem>
-						</MenuItems>
-					</Menu>
-
-					{/* Profile Dropdown */}
-					<Menu as="div" className="relative">
-						<MenuButton className="flex items-center space-x-2 p-2">
-							<UserIcon className="h-6 w-6 text-blue-800 dark:text-white" />
-							{/* <span>Profile</span> */}
-						</MenuButton>
-
-						<MenuItems className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
-							<MenuItem>
-								{({ active }) => (
-									<Link
-										to="/profile"
-										className={`block px-4 py-2 ${active ? "bg-gray-100" : ""}`}
-									>
-										View Profile
-									</Link>
-								)}
-							</MenuItem>
-
-							<MenuItem>
-								{({ active }) => (
 									<button
-										className={`w-full text-left px-4 py-2 ${
-											active ? "bg-gray-100" : ""
-										}`}
-										onClick={() => alert("Logout")}
+										onClick={logout}
+										className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
 									>
-										Logout
+										Sign out
 									</button>
-								)}
-							</MenuItem>
-						</MenuItems>
-					</Menu>
+								</div>
+							</motion.div>
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
+		</nav>
 	);
+};
+
+Navbar.propTypes = {
+	isMobileMenuOpen: PropTypes.bool.isRequired,
+	setIsMobileMenuOpen: PropTypes.func.isRequired,
+	isMobile: PropTypes.bool.isRequired,
 };
 
 export default Navbar;

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
+  UserIcon,
   EnvelopeIcon,
   LockClosedIcon,
   EyeIcon,
@@ -12,17 +13,23 @@ import { useAuth } from "../../context/AuthContext";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { toast } from "react-toastify";
 
-const Login = () => {
-  const { login, loading } = useAuth();
+const SignUp = () => {
+  const { signup, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors = {};
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+    }
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -30,6 +37,13 @@ const Login = () => {
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -39,10 +53,11 @@ const Login = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await login(formData.email, formData.password);
-        toast.success("Logged in successfully!");
-      } catch (error) {
-        toast.error("Invalid email or password");
+        await signup(formData.email, formData.password, formData.name);
+        toast.success("Account created successfully! Please log in.");
+        navigate("/login");
+      } catch {
+        // Error handled by auth context
       }
     }
   };
@@ -73,6 +88,18 @@ const Login = () => {
       >
         <div className="space-y-4">
           <Input
+            label="Full name"
+            type="text"
+            name="name"
+            autoComplete="name"
+            required
+            icon={UserIcon}
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+          />
+
+          <Input
             label="Email address"
             type="email"
             name="email"
@@ -89,7 +116,7 @@ const Login = () => {
               label="Password"
               type={showPassword ? "text" : "password"}
               name="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
               icon={LockClosedIcon}
               value={formData.password}
@@ -108,43 +135,60 @@ const Login = () => {
               )}
             </button>
           </div>
+
+          <Input
+            label="Confirm password"
+            type="password"
+            name="confirmPassword"
+            autoComplete="new-password"
+            required
+            icon={LockClosedIcon}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+          />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <label
-              htmlFor="remember-me"
-              className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
-            >
-              Remember me
-            </label>
-          </div>
-
-          <Link
-            to="/reset-password"
-            className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+        <div className="flex items-center">
+          <input
+            id="terms"
+            name="terms"
+            type="checkbox"
+            required
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label
+            htmlFor="terms"
+            className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
           >
-            Forgot password?
-          </Link>
+            I agree to the{" "}
+            <Link
+              to="/terms"
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              to="/privacy"
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Privacy Policy
+            </Link>
+          </label>
         </div>
 
         <Button type="submit" isLoading={loading} className="w-full">
-          Sign in
+          Create account
         </Button>
 
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            to="/signup"
+            to="/login"
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
           >
-            Sign up
+            Sign in
           </Link>
         </p>
       </motion.form>
@@ -152,4 +196,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp; 

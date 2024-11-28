@@ -1,18 +1,17 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const token = localStorage.getItem("authToken");
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-const axiosInstance = axios.create({
-	baseURL: import.meta.env.VITE_API_URL || "http://localhost:1337",
+export const api = axios.create({
+	baseURL: BASE_URL,
 	headers: {
 		"Content-Type": "application/json",
-		...(token && { Authorization: `Bearer ${token}` }),
 	},
 });
 
-// Request interceptor:Attach token dynamically if it changes
-axiosInstance.interceptors.request.use(
+// Request interceptor
+api.interceptors.request.use(
 	(config) => {
 		const token = localStorage.getItem("authToken");
 		if (token) {
@@ -20,39 +19,54 @@ axiosInstance.interceptors.request.use(
 		}
 		return config;
 	},
-	// If there's an error in the request setup, reject the promise with the error
-	(error) => Promise.reject(error)
-);
-
-// Response interceptor: Handle errors globally
-axiosInstance.interceptors.response.use(
-	(response) => response,
 	(error) => {
-		const status = error.response?.status;
-
-		switch (status) {
-			case 400:
-				toast.error(error.response.data.message);
-				break;
-			case 401:
-				toast.error("Your session has expired. Please login again.");
-				window.location.href = "/login";
-				break;
-			case 403:
-				toast.error("You don't have permission to access this resource.");
-				break;
-			case 404:
-				toast.error("Resource not found.");
-				break;
-			case 500:
-				toast.error("Something went wrong. Please try again.");
-				break;
-			default:
-				toast.error("Something went wrong. Please try again.");
-		}
-
 		return Promise.reject(error);
 	}
 );
 
-export default axiosInstance;
+// Response interceptor
+api.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		const message = error.response?.data?.message || "Something went wrong";
+		
+		if (error.response?.status === 401) {
+			localStorage.removeItem("authToken");
+			localStorage.removeItem("user");
+			window.location.href = "/login";
+		}
+
+		toast.error(message);
+		return Promise.reject(error);
+	}
+);
+
+export const endpoints = {
+	auth: {
+		login: "/auth/login",
+		signup: "/auth/signup",
+		resetPassword: "/auth/reset-password",
+		updateProfile: "/auth/profile",
+	},
+	orders: {
+		list: "/orders",
+		create: "/orders",
+		update: (id) => `/orders/${id}`,
+		delete: (id) => `/orders/${id}`,
+	},
+	products: {
+		list: "/products",
+		create: "/products",
+		update: (id) => `/products/${id}`,
+		delete: (id) => `/products/${id}`,
+	},
+	stock: {
+		list: "/stock",
+		update: (id) => `/stock/${id}`,
+	},
+	analytics: {
+		dashboard: "/analytics/dashboard",
+		sales: "/analytics/sales",
+		customers: "/analytics/customers",
+	},
+};

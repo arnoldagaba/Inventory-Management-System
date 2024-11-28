@@ -1,146 +1,180 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
 import {
-	Cog6ToothIcon,
 	BellIcon,
-	CubeIcon,
-	BellAlertIcon,
-	CubeTransparentIcon,
+	CheckCircleIcon,
+	XMarkIcon,
+	FunnelIcon,
 } from "@heroicons/react/24/outline";
+import { Card, Container, Button, Badge } from "../../components/ui";
+import { formatDate } from "../../utils/formatDate";
 import { notifications } from "../../constants/constants";
 
-const NotificationsPage = () => {
-	const [filter, setFilter] = useState("All");
-	const [dateRange, setDateRange] = useState("Last 7 Days");
-	const [expandedNotification, setExpandedNotification] = useState(null);
+const priorityColors = {
+	High: "error",
+	Medium: "warning",
+	Low: "info",
+};
 
-	const toggleNotificationExpansion = (id) => {
-		setExpandedNotification(expandedNotification === id ? null : id);
-	};
+const typeIcons = {
+	System: BellIcon,
+	Stock: FunnelIcon,
+	Order: CheckCircleIcon,
+};
 
-	const markAsRead = (id) => {
-		// Mark notification as read and update state
-		toast.info(`Notification ${id} marked as read`);
-	};
+const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
+	const Icon = typeIcons[notification.type] || BellIcon;
 
 	return (
-		<div className="p-4 space-y-6">
-			{/* Header Section */}
-			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-2xl font-semibold dark:text-white">
-					Notifications
-				</h2>
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, x: -20 }}
+			className={`p-4 border-b last:border-0 dark:border-gray-700 ${
+				!notification.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
+			}`}
+		>
+			<div className="flex items-start justify-between gap-4">
+				<div className="flex items-start space-x-3">
+					<Icon className="h-6 w-6 text-gray-400 mt-1" />
+					<div>
+						<div className="flex items-center space-x-2">
+							<h3 className="font-medium text-gray-900 dark:text-white">
+								{notification.title}
+							</h3>
+							<Badge variant={priorityColors[notification.priority]} size="sm">
+								{notification.priority}
+							</Badge>
+						</div>
+						<p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+							{notification.description}
+						</p>
+						<p className="mt-1 text-xs text-gray-400">
+							{notification.timestamp}
+						</p>
+					</div>
+				</div>
 
-				<button className="text-gray-500 hover:text-gray-700">
-					<Cog6ToothIcon size={24} />
-				</button>
-			</div>
-
-			<div className="flex items-center space-x-4 mb-4">
-				<select
-					onChange={(e) => setFilter(e.target.value)}
-					className="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:text-white cursor-pointer outline-none"
-				>
-					<option value="All">All</option>
-					<option value="System">System</option>
-					<option value="Stock">Stock</option>
-					<option value="Order">Order</option>
-					<option value="Announcements">Announcements</option>
-				</select>
-
-				<select
-					onChange={(e) => setDateRange(e.target.value)}
-					className="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:text-white cursor-pointer outline-none"
-				>
-					<option value="Last 7 Days">Last 7 Days</option>
-					<option value="This Month">This Month</option>
-					<option value="Last 3 Months">Last 3 Months</option>
-				</select>
-			</div>
-
-			{/* Main Notifications Feed */}
-			<div className="space-y-4">
-				{notifications
-					.filter((n) => filter === "All" || n.type === filter)
-					.map((notification) => (
-						<motion.div
-							key={notification.id}
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							className={`p-4 rounded-lg shadow-md dark:text-white ${
-								notification.read
-									? "bg-gray-100 dark:bg-gray-600"
-									: "bg-white dark:bg-gray-700"
-							} ${
-								notification.priority === "High"
-									? "border-l-4 border-red-500 dark:border-red-700"
-									: ""
-							} cursor-pointer`}
-							onClick={() => toggleNotificationExpansion(notification.id)}
+				<div className="flex items-center space-x-2">
+					{!notification.read && (
+						<Button
+							variant="secondary"
+							onClick={() => onMarkAsRead(notification.id)}
+							className="text-sm"
 						>
-							<div className="flex items-center justify-between">
-								<div className="flex items-center space-x-3">
-									<div className="text-xl">
-										{notification.type === "System" && (
-											<BellAlertIcon className="text-blue-500 dark:text-blue-800" />
-										)}
-										{notification.type === "Stock" && (
-											<CubeTransparentIcon className="text-yellow-500" />
-										)}
-										{/* Add icons for other types */}
-									</div>
-
-									<div>
-										<h4 className="text-lg font-semibold">
-											{notification.title}
-										</h4>
-
-										<p className="text-sm text-gray-600 dark:text-gray-200">
-											{notification.description}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-center space-x-3">
-									<span className="text-xs text-gray-500 dark:text-gray-300">
-										{notification.timestamp}
-									</span>
-									{!notification.read && (
-										<span className="text-xs font-bold text-red-500 dark:text-red-700">
-											New
-										</span>
-									)}
-								</div>
-							</div>
-
-							{/* Expanded Notification Panel */}
-							{expandedNotification === notification.id && (
-								<motion.div
-									initial={{ height: 0, opacity: 0 }}
-									animate={{ height: "auto", opacity: 1 }}
-									className="mt-3 text-sm text-gray-700 dark:text-gray-300"
-								>
-									<p>Details: {notification.description}</p>
-									<div className="flex space-x-4 mt-3">
-										<button
-											onClick={() => markAsRead(notification.id)}
-											className="bg-green-500 dark:bg-green-600 text-white px-4 py-1 rounded-md shadow-md"
-										>
-											Mark as Read
-										</button>
-
-										<button className="bg-gray-300 dark:bg-gray-100 text-gray-800 px-4 py-1 rounded-md shadow-md">
-											Dismiss
-										</button>
-									</div>
-								</motion.div>
-							)}
-						</motion.div>
-					))}
+							Mark as read
+						</Button>
+					)}
+					<Button
+						variant="secondary"
+						onClick={() => onDelete(notification.id)}
+						className="p-1 text-red-600 dark:text-red-400"
+					>
+						<XMarkIcon className="h-4 w-4" />
+					</Button>
+				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
 
-export default NotificationsPage;
+NotificationItem.propTypes = {
+	notification: PropTypes.shape({
+		id: PropTypes.number.isRequired,
+		type: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		timestamp: PropTypes.string.isRequired,
+		priority: PropTypes.string.isRequired,
+		read: PropTypes.bool.isRequired,
+	}).isRequired,
+	onMarkAsRead: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
+};
+
+const Notifications = () => {
+	const [selectedType, setSelectedType] = useState("all");
+	const [items, setItems] = useState(notifications);
+
+	const handleMarkAsRead = (id) => {
+		setItems((prev) =>
+			prev.map((item) =>
+				item.id === id ? { ...item, read: true } : item
+			)
+		);
+	};
+
+	const handleDelete = (id) => {
+		setItems((prev) => prev.filter((item) => item.id !== id));
+	};
+
+	const handleMarkAllAsRead = () => {
+		setItems((prev) => prev.map((item) => ({ ...item, read: true })));
+	};
+
+	const handleClearAll = () => {
+		setItems([]);
+	};
+
+	const filteredItems = items.filter(
+		(item) => selectedType === "all" || item.type === selectedType
+	);
+
+	const unreadCount = items.filter((item) => !item.read).length;
+
+	return (
+		<Container>
+			<div className="space-y-6">
+				<div className="flex flex-col sm:flex-row justify-between gap-4">
+					<div className="flex flex-col sm:flex-row gap-4">
+						<select
+							value={selectedType}
+							onChange={(e) => setSelectedType(e.target.value)}
+							className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+						>
+							<option value="all">All Types</option>
+							<option value="System">System</option>
+							<option value="Stock">Stock</option>
+							<option value="Order">Order</option>
+						</select>
+
+						{unreadCount > 0 && (
+							<Button variant="secondary" onClick={handleMarkAllAsRead}>
+								Mark all as read
+							</Button>
+						)}
+					</div>
+
+					<Button
+						variant="secondary"
+						onClick={handleClearAll}
+						className="text-red-600 dark:text-red-400"
+					>
+						Clear All
+					</Button>
+				</div>
+
+				<Card>
+					<div className="divide-y dark:divide-gray-700">
+						{filteredItems.map((notification) => (
+							<NotificationItem
+								key={notification.id}
+								notification={notification}
+								onMarkAsRead={handleMarkAsRead}
+								onDelete={handleDelete}
+							/>
+						))}
+						{filteredItems.length === 0 && (
+							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+								<BellIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+								<p>No notifications found.</p>
+							</div>
+						)}
+					</div>
+				</Card>
+			</div>
+		</Container>
+	);
+};
+
+export default Notifications;

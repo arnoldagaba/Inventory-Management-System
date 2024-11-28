@@ -1,212 +1,190 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { Dialog, Transition } from "@headlessui/react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-	Tooltip,
-	ResponsiveContainer,
-} from "recharts";
-import { CubeIcon } from "@heroicons/react/24/outline";
-import { products, stockData } from "../../constants/constants";
-import { useTheme } from "../../hooks/useTheme";
+	PlusIcon,
+	ArrowUpIcon,
+	ArrowDownIcon,
+	ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
+import { Card, Container, Button, Badge, Input } from "../../components/ui";
+import { formatNumberWithComma } from "../../utils/formatNumber";
+import { stockItems, stockStatusColors } from "../../constants/constants";
+import { toast } from "react-toastify";
+import PropTypes from "prop-types";
+
+const StockItem = ({ item, onUpdateStock }) => (
+	<motion.div
+		initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			className="p-4 border-b last:border-0 dark:border-gray-700"
+	>
+		<div className="flex items-start justify-between">
+			<div>
+				<h3 className="font-medium text-gray-900 dark:text-white">
+					{item.name}
+				</h3>
+				<p className="text-sm text-gray-500 dark:text-gray-400">
+					SKU: {item.sku}
+				</p>
+			</div>
+			<Badge variant={stockStatusColors[item.status]} size="sm">
+				{item.status}
+			</Badge>
+		</div>
+
+		<div className="mt-4 flex items-center justify-between">
+			<div className="flex items-center space-x-4">
+				<div>
+					<p className="text-sm text-gray-500 dark:text-gray-400">
+						Current Stock
+					</p>
+					<p className="text-lg font-semibold text-gray-900 dark:text-white">
+						{formatNumberWithComma(item.quantity)}
+					</p>
+				</div>
+				<div>
+					<p className="text-sm text-gray-500 dark:text-gray-400">
+						Reorder Point
+					</p>
+					<p className="text-lg font-semibold text-gray-900 dark:text-white">
+						{formatNumberWithComma(item.reorderPoint)}
+					</p>
+				</div>
+			</div>
+
+			<div className="flex space-x-2">
+				<Button
+					variant="secondary"
+					onClick={() => onUpdateStock(item, "decrease")}
+					className="p-2"
+					disabled={item.quantity <= 0}
+					title="Decrease stock"
+				>
+					<ArrowDownIcon className="h-4 w-4" />
+				</Button>
+				<Button
+					variant="secondary"
+					onClick={() => onUpdateStock(item, "increase")}
+					className="p-2"
+					title="Increase stock"
+				>
+					<ArrowUpIcon className="h-4 w-4" />
+				</Button>
+			</div>
+		</div>
+	</motion.div>
+);
+
+StockItem.propTypes = {
+	item: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		sku: PropTypes.string.isRequired,
+		quantity: PropTypes.number.isRequired,
+		reorderPoint: PropTypes.number.isRequired,
+		status: PropTypes.string.isRequired,
+	}).isRequired,
+	onUpdateStock: PropTypes.func.isRequired,
+};
 
 const Stock = () => {
-	const { theme } = useTheme();
-	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [items, setItems] = useState(stockItems);
 
-	const handleRestockClick = (product) => {
-		setSelectedProduct(product);
-		setIsDrawerOpen(true);
+	const handleUpdateStock = (item, action) => {
+		if (action === "decrease" && item.quantity <= 0) {
+			toast.error("Stock cannot be negative");
+			return;
+		}
+
+		setItems((prevItems) =>
+			prevItems.map((i) => {
+				if (i.id === item.id) {
+					const newQuantity =
+						action === "increase" ? i.quantity + 1 : i.quantity - 1;
+					const newStatus =
+						newQuantity <= i.reorderPoint / 2
+							? "Critical"
+							: newQuantity <= i.reorderPoint
+							? "Low"
+							: "Optimal";
+					return { ...i, quantity: newQuantity, status: newStatus };
+				}
+				return i;
+			})
+		);
+		toast.success(
+			`${action === "increase" ? "Added" : "Removed"} 1 unit of ${item.name}`
+		);
 	};
 
-	const triggerLowStockAlert = (product) => {
-		toast.warn(`Low stock warning for ${product.name}`, {
-			className: "shake-animation",
-			icon: <CubeIcon />,
-		});
-	};
+	const filteredItems = items.filter(
+		(item) =>
+			item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			item.sku.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
+	const lowStockItems = filteredItems.filter(
+		(item) => item.status !== "Optimal"
+	);
 
 	return (
-		<div className="p-4 space-y-6">
-			{/* Header: Low Stock Alerts */}
-			<div className="flex items-center space-x-4 mb-4">
-				{/*  TODO: Maybe these function of this button should be changed */}
-				{products
-					.filter((p) => p.stock < p.minThreshold)
-					.map((product) => (
-						<button
-							key={product.id}
-							onClick={() => triggerLowStockAlert(product)}
-							className="bg-red-600 dark:bg-red-700 text-white px-4 py-2 rounded-md"
-						>
-							{product.name}: Low on Stock - Restock Now
-						</button>
-					))}
-			</div>
+		<Container>
+			<div className="space-y-6">
+				{lowStockItems.length > 0 && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+					>
+						<Card className="bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700">
+							<div className="flex items-start space-x-3">
+								<ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mt-0.5" />
+								<div>
+									<h3 className="font-medium text-yellow-800 dark:text-yellow-300">
+										Low Stock Alert
+									</h3>
+									<p className="mt-1 text-sm text-yellow-700 dark:text-yellow-400">
+										{lowStockItems.length} items need attention
+									</p>
+								</div>
+							</div>
+						</Card>
+					</motion.div>
+				)}
 
-			{/* Main Section: Inventory Chart */}
-			<div className="bg-white dark:bg-slate-700 rounded-lg shadow-md p-4">
-				<h3 className="text-lg font-semibold mb-2 dark:text-white">
-					Inventory Trends
-				</h3>
-				<ResponsiveContainer width="100%" height={300}>
-					<BarChart data={stockData}>
-						<XAxis
-							dataKey="name"
-							stroke={theme === "dark" ? "white" : "black"}
-						/>
-						<YAxis stroke={theme === "dark" ? "white" : "black"} />
-						<Tooltip />
-						<Bar dataKey="stock" fill="#4f46e5" />
-					</BarChart>
-				</ResponsiveContainer>
-			</div>
+				<div className="flex flex-col sm:flex-row justify-between gap-4">
+					<Input
+						type="text"
+						placeholder="Search stock items..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="w-full sm:w-64"
+					/>
 
-			{/* Stock Table */}
-			<div className="bg-white rounded-lg shadow-md overflow-hidden mt-6">
-				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
-					<thead className="bg-gray-50 dark:bg-slate-500">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-								Product
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-								Stock
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-								Supplier
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-								Actions
-							</th>
-						</tr>
-					</thead>
+					<Button onClick={() => toast.info("Add new stock item")}>
+						<PlusIcon className="h-5 w-5 mr-2" />
+						Add Item
+					</Button>
+				</div>
 
-					<tbody className="bg-white dark:bg-slate-700  divide-y divide-gray-200 dark:divide-gray-500">
-						{products.map((product) => (
-							<tr
-								key={product.id}
-								className={`${
-									product.stock < product.minThreshold
-										? "bg-red-50 dark:bg-inherit"
-										: ""
-								} `}
-							>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-									{product.name}
-								</td>
-
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-									{product.stock}
-									{product.stock < product.minThreshold && (
-										<span className="ml-2 inline-block px-2 py-1 text-xs font-semibold text-red-700 dark:text-red-800 bg-red-200 dark:bg-red-300 rounded-full animate-pulse">
-											Low
-										</span>
-									)}
-								</td>
-
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
-									{product.supplier}
-								</td>
-
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white">
-									<button
-										onClick={() => handleRestockClick(product)}
-										className="text-blue-400 hover:underline"
-									>
-										Restock
-									</button>
-								</td>
-							</tr>
+				<Card>
+					<div className="divide-y dark:divide-gray-700">
+						{filteredItems.map((item) => (
+							<StockItem
+								key={item.id}
+								item={item}
+								onUpdateStock={handleUpdateStock}
+							/>
 						))}
-					</tbody>
-				</table>
-			</div>
-
-			{/* Restock Form Drawer */}
-			<Transition show={isDrawerOpen} as={React.Fragment}>
-				<Dialog
-					as="div"
-					className="fixed inset-0 overflow-hidden"
-					onClose={() => setIsDrawerOpen(false)}
-				>
-					<div className="absolute inset-0 overflow-hidden">
-						<Dialog.Overlay className="absolute inset-0 bg-black opacity-30" />
-						<motion.div
-							initial={{ x: "100%" }}
-							animate={{ x: 0 }}
-							exit={{ x: "100%" }}
-							transition={{ type: "spring", damping: 20, stiffness: 300 }}
-							className="absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-xl p-6"
-						>
-							<h2 className="text-lg font-semibold mb-4">Restock Product</h2>
-							<p className="mb-4">
-								<strong>Product:</strong> {selectedProduct?.name}
-							</p>
-							<form className="space-y-4">
-								<div>
-									<label className="block text-sm font-medium text-gray-700">
-										Quantity
-									</label>
-									<input
-										type="number"
-										className="mt-1 px-3 py-2 border rounded-md w-full"
-										placeholder="Enter quantity"
-									/>
-								</div>
-								<div>
-									<label className="block text-sm font-medium text-gray-700">
-										Supplier
-									</label>
-									<input
-										type="text"
-										value={selectedProduct?.supplier || ""}
-										className="mt-1 px-3 py-2 border rounded-md w-full"
-										placeholder="Supplier name"
-										disabled
-									/>
-								</div>
-								<div>
-									<label className="block text-sm font-medium text-gray-700">
-										Expected Arrival Date
-									</label>
-									<input
-										type="date"
-										className="mt-1 px-3 py-2 border rounded-md w-full"
-									/>
-								</div>
-								<div className="flex justify-end space-x-4 mt-4">
-									<button
-										onClick={() => {
-											toast.success(
-												`Restock request for ${selectedProduct?.name} submitted!`
-											);
-											setIsDrawerOpen(false);
-										}}
-										type="button"
-										className="bg-green-500 text-white px-4 py-2 rounded-md"
-									>
-										Submit
-									</button>
-									<button
-										onClick={() => setIsDrawerOpen(false)}
-										type="button"
-										className="bg-gray-500 text-white px-4 py-2 rounded-md"
-									>
-										Cancel
-									</button>
-								</div>
-							</form>
-						</motion.div>
+						{filteredItems.length === 0 && (
+							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+								No items found matching your search.
+							</div>
+						)}
 					</div>
-				</Dialog>
-			</Transition>
-		</div>
+				</Card>
+			</div>
+		</Container>
 	);
 };
 

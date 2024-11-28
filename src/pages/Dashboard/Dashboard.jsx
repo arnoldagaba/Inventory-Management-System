@@ -1,172 +1,175 @@
-import { LineChart, Line, BarChart, Bar, Tooltip } from "recharts";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import { toast } from "react-toastify";
 import {
-	BanknotesIcon,
-	RectangleStackIcon,
-	ShoppingBagIcon,
-	UsersIcon,
-} from "@heroicons/react/24/outline";
-import {
-	actions,
-	recentActivity,
-	salesData3,
-	stockData2,
-} from "../../constants/constants";
+	LineChart,
+	Line,
+	BarChart,
+	Bar,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	ResponsiveContainer,
+} from "recharts";
+import { Card, Grid, Container, Badge } from "../../components/ui";
 import { useTheme } from "../../hooks/useTheme";
+import { formatNumberWithComma } from "../../utils/formatNumber";
+import { dashboardStats, dashboardChartData, activity } from "../../constants/constants";
+
+const StatCard = ({ title, value, icon: Icon, trend, color }) => (
+	<Card className="relative overflow-hidden">
+		<div className="flex items-start justify-between">
+			<div>
+				<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+					{title}
+				</p>
+				<div className="mt-2 flex items-baseline">
+					<p className="text-2xl font-semibold text-gray-900 dark:text-white">
+						<CountUp end={value} separator="," />
+					</p>
+					{trend && (
+						<Badge
+							variant={trend > 0 ? "success" : "error"}
+							size="sm"
+							className="ml-2"
+						>
+							{trend > 0 ? "+" : ""}
+							{trend}%
+						</Badge>
+					)}
+				</div>
+			</div>
+			<div className={`p-2 rounded-lg bg-${color}-100 dark:bg-${color}-900/20`}>
+				<Icon className={`h-6 w-6 text-${color}-600 dark:text-${color}-400`} />
+			</div>
+		</div>
+	</Card>
+);
+
+const ChartCard = ({ title, children }) => (
+	<Card>
+		<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+			{title}
+		</h3>
+		<div className="h-[300px]">{children}</div>
+	</Card>
+);
 
 const Dashboard = () => {
 	const { theme } = useTheme();
 
-	// Example data for charts and counters
-	const summaryData = [
-		{
-			title: "Total Orders",
-			value: 1240,
-			icon: <ShoppingBagIcon className="size-6" />,
-			trend: [{ value: 1200 }, { value: 1240 }],
-		},
-		{
-			title: "Revenue",
-			value: 43210,
-			icon: <BanknotesIcon className="size-6" />,
-			trend: [{ value: 40000 }, { value: 43210 }],
-		},
-		{
-			title: "Inventory Status",
-			value: 35,
-			icon: <RectangleStackIcon className="size-6" />,
-			trend: [{ value: 40 }, { value: 35 }],
-		},
-		{
-			title: "Active Users",
-			value: 145,
-			icon: <UsersIcon className="size-6" />,
-			trend: [{ value: 130 }, { value: 145 }],
-		},
-	];
-
-	const handleActionClick = (action) => {
-		toast.success(`${action} action completed!`);
-	};
-
 	return (
-		<div className="p-4 space-y-6">
-			{/* Top Section: Summary Cards */}
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-				{summaryData.map((card, index) => (
-					<motion.div
-						key={index}
-						className="bg-white dark:bg-slate-700 dark:text-white p-4 rounded-lg shadow-md flex flex-col items-center space-y-2"
-						whileHover={{ scale: 1.05 }}
-					>
-						<span className="text-4xl">{card.icon}</span>
-
-						<h3 className="text-xl font-semibold">{card.title}</h3>
-
-						<CountUp
-							start={0}
-							end={card.value}
-							duration={2.5}
-							separator=","
-							className="text-2xl font-bold"
-						/>
-
-						<LineChart width={100} height={30} data={card.trend}>
-							<Line
-								type="monotone"
-								dataKey="value"
-								dot={false}
-								stroke={`${theme === "dark" ? "white" : "#8884d8"}`}
-								strokeWidth={2}
-							/>
-						</LineChart>
-					</motion.div>
-				))}
-			</div>
-
-			{/* Quick Actions */}
-			<div className="flex space-x-4">
-				{actions.map((action, index) => (
-					<motion.button
-						key={index}
-						onClick={() => handleActionClick(action)}
-						className="bg-blue-500 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md"
-						whileHover={{ scale: 1.1 }}
-					>
-						{action}
-					</motion.button>
-				))}
-			</div>
-
-			{/* Main Section: Analytics Graphs */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<motion.div
-					initial={{ opacity: 0, x: -100 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1 }}
-					className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md"
-				>
-					<h3 className="text-lg font-semibold mb-2 dark:text-white">
-						Sales Trends
-					</h3>
-
-					<LineChart width={400} height={200} data={salesData3}>
-						<Line
-							type="monotone"
-							dataKey="sales"
-							stroke={`${theme === "dark" ? "white" : "#8884d8"}`}
-							strokeWidth={3}
-						/>
-						<Tooltip />
-					</LineChart>
-				</motion.div>
-
-				<motion.div
-					initial={{ opacity: 0, x: 100 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1 }}
-					className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md"
-				>
-					<h3 className="text-lg font-semibold mb-2 dark:text-white">
-						Stock Levels
-					</h3>
-
-					<BarChart width={400} height={200} data={stockData2}>
-						<Bar dataKey="stock" fill="#82ca9d" />
-						<Tooltip />
-					</BarChart>
-				</motion.div>
-			</div>
-
-			{/* Recent Activity Feed */}
-			<div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-md mt-6">
-				<h3 className="text-lg font-semibold mb-2 dark:text-white">
-					Recent Activity
-				</h3>
-
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 1 }}
-				>
-					{recentActivity.map((activity, index) => (
+		<Container>
+			<div className="space-y-6">
+				{/* Stats Grid */}
+				<Grid>
+					{dashboardStats.map((stat, index) => (
 						<motion.div
-							key={index}
-							className="py-2 border-b last:border-b-0 dark:border-gray-400 dark:text-gray-200"
-							whileHover={{ scale: 1.02 }}
-							transition={{ duration: 0.2 }}
+							key={stat.title}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: index * 0.1 }}
 						>
-							<span className="font-semibold dark:text-white">
-								{activity.type}:{" "}
-							</span>
-							{activity.content}
+							<StatCard {...stat} />
 						</motion.div>
 					))}
-				</motion.div>
+				</Grid>
+
+				{/* Charts */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<ChartCard title="Sales Overview">
+						<ResponsiveContainer width="100%" height="100%">
+							<LineChart data={dashboardChartData.sales}>
+								<CartesianGrid
+									strokeDasharray="3 3"
+									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
+								/>
+								<XAxis
+									dataKey="name"
+									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+								/>
+								<YAxis
+									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+									tickFormatter={(value) => formatNumberWithComma(value)}
+								/>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+										border: "none",
+										borderRadius: "0.5rem",
+									}}
+									formatter={(value) => [`UGX ${formatNumberWithComma(value)}`]}
+								/>
+								<Line
+									type="monotone"
+									dataKey="value"
+									stroke={theme === "dark" ? "#60a5fa" : "#3b82f6"}
+									strokeWidth={2}
+									dot={{ r: 4 }}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
+					</ChartCard>
+
+					<ChartCard title="Stock Levels">
+						<ResponsiveContainer width="100%" height="100%">
+							<BarChart data={dashboardChartData.stock}>
+								<CartesianGrid
+									strokeDasharray="3 3"
+									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
+								/>
+								<XAxis
+									dataKey="name"
+									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+								/>
+								<YAxis stroke={theme === "dark" ? "#9ca3af" : "#4b5563"} />
+								<Tooltip
+									contentStyle={{
+										backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+										border: "none",
+										borderRadius: "0.5rem",
+									}}
+								/>
+								<Bar
+									dataKey="stock"
+									fill={theme === "dark" ? "#60a5fa" : "#3b82f6"}
+									radius={[4, 4, 0, 0]}
+								/>
+							</BarChart>
+						</ResponsiveContainer>
+					</ChartCard>
+				</div>
+
+				{/* Recent Activity */}
+				<Card>
+					<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+						Recent Activity
+					</h3>
+					<div className="space-y-4">
+						{activity.map((item, index) => (
+							<motion.div
+								key={index}
+								initial={{ opacity: 0, x: -20 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{ delay: index * 0.1 }}
+								className="flex items-start space-x-3 py-3 border-b last:border-0 border-gray-200 dark:border-gray-700"
+								whileHover={{ x: 4 }}
+							>
+								<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500" />
+								<div>
+									<span className="font-medium text-gray-900 dark:text-white">
+										{item.type}
+									</span>
+									<p className="text-sm text-gray-500 dark:text-gray-400">
+										{item.content}
+									</p>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				</Card>
 			</div>
-		</div>
+		</Container>
 	);
 };
 
