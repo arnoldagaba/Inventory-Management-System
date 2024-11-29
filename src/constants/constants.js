@@ -340,22 +340,200 @@ export const orderStatus = {
 export const products = [
 	{
 		id: "1",
-		name: "Product A",
+		name: "MacBook Pro M2",
 		sku: "SKU001",
-		price: 150000,
+		price: 5500000,  // UGX 5.5M
 		stock: 45,
 		category: "Electronics",
 		image: "https://via.placeholder.com/150",
 	},
-	// Add more products...
+	{
+		id: "2",
+		name: "Samsung 4K Smart TV",
+		sku: "SKU002",
+		price: 3200000,  // UGX 3.2M
+		stock: 30,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "3",
+		name: "Nike Air Max",
+		sku: "SKU003",
+		price: 450000,  // UGX 450K
+		stock: 100,
+		category: "Footwear",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "4",
+		name: "Leather Office Chair",
+		sku: "SKU004",
+		price: 850000,  // UGX 850K
+		stock: 25,
+		category: "Furniture",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "5",
+		name: "iPhone 14 Pro",
+		sku: "SKU005",
+		price: 3800000,  // UGX 3.8M
+		stock: 50,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "6",
+		name: "Coffee Maker Deluxe",
+		sku: "SKU006",
+		price: 280000,  // UGX 280K
+		stock: 60,
+		category: "Appliances",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "7",
+		name: "Gaming Mouse",
+		sku: "SKU007",
+		price: 220000,  // UGX 220K
+		stock: 80,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "8",
+		name: "Yoga Mat Premium",
+		sku: "SKU008",
+		price: 95000,  // UGX 95K
+		stock: 120,
+		category: "Sports",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "9",
+		name: "Wireless Earbuds",
+			sku: "SKU009",
+		price: 550000,  // UGX 550K
+		stock: 75,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "10",
+		name: "Standing Desk",
+		sku: "SKU010",
+		price: 1500000,  // UGX 1.5M
+		stock: 20,
+		category: "Furniture",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "11",
+		name: "Protein Powder",
+		sku: "SKU011",
+		price: 150000,  // UGX 150K
+		stock: 150,
+		category: "Health",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "12",
+		name: "Smart Watch",
+		sku: "SKU012",
+		price: 750000,  // UGX 750K
+		stock: 40,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "13",
+		name: "Backpack Pro",
+			sku: "SKU013",
+		price: 180000,  // UGX 180K
+		stock: 90,
+		category: "Accessories",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "14",
+		name: "Air Purifier",
+		sku: "SKU014",
+		price: 480000,  // UGX 480K
+		stock: 35,
+		category: "Appliances",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "15",
+		name: "Mechanical Keyboard",
+			sku: "SKU015",
+		price: 320000,  // UGX 320K
+		stock: 65,
+		category: "Electronics",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "16",
+		name: "Running Shoes",
+		sku: "SKU016",
+		price: 280000,  // UGX 280K
+		stock: 85,
+		category: "Footwear",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "17",
+		name: "Blender Pro",
+		sku: "SKU017",
+		price: 250000,  // UGX 250K
+		stock: 45,
+		category: "Appliances",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "18",
+		name: "Desk Lamp",
+		sku: "SKU018",
+		price: 120000,  // UGX 120K
+		stock: 70,
+		category: "Furniture",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "19",
+		name: "Tablet Stand",
+		sku: "SKU019",
+		price: 85000,  // UGX 85K
+		stock: 100,
+		category: "Accessories",
+		image: "https://via.placeholder.com/150",
+	},
+	{
+		id: "20",
+		name: "Water Bottle",
+		sku: "SKU020",
+		price: 65000,  // UGX 65K
+		stock: 200,
+		category: "Sports",
+		image: "https://via.placeholder.com/150",
+	}
 ];
 
-export const productCategories = ["Electronics", "Clothing", "Food", "Other"];
+export const productCategories = [
+	"Electronics",
+	"Furniture",
+	"Appliances",
+	"Sports",
+	"Footwear",
+	"Health",
+	"Accessories"
+];
 
 export const stockItems = [
 	{
 		id: "STOCK001",
-		name: "Laptop X1",
+		name: "MacBook Pro M2",
 		sku: "LAP001",
 		quantity: 15,
 		reorderPoint: 20,
@@ -364,8 +542,8 @@ export const stockItems = [
 	},
 	{
 		id: "STOCK002",
-		name: "Smartphone Y2",
-		sku: "PHN002",
+		name: "Samsung 4K Smart TV",
+		sku: "TV002",
 		quantity: 45,
 		reorderPoint: 25,
 		lastUpdated: "2024-03-05",
@@ -373,12 +551,30 @@ export const stockItems = [
 	},
 	{
 		id: "STOCK003",
-		name: "Tablet Z3",
-		sku: "TAB003",
+		name: "iPhone 14 Pro",
+		sku: "PHN003",
 		quantity: 8,
 		reorderPoint: 15,
 		lastUpdated: "2024-03-10",
 		status: "Critical",
+	},
+	{
+		id: "STOCK004",
+		name: "Gaming Mouse",
+		sku: "ACC004",
+		quantity: 30,
+		reorderPoint: 20,
+		lastUpdated: "2024-03-12",
+		status: "Optimal",
+	},
+	{
+		id: "STOCK005",
+		name: "Mechanical Keyboard",
+		sku: "ACC005",
+		quantity: 12,
+		reorderPoint: 15,
+		lastUpdated: "2024-03-13",
+		status: "Low",
 	},
 ];
 

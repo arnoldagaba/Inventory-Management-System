@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
 	PlusIcon,
@@ -19,6 +19,7 @@ import {
 	Button,
 	Input,
 	Tooltip,
+	Pagination,
 } from "../../components/ui";
 import { formatCurrency } from "../../utils/formatNumber";
 import { orders, tableHeaders } from "../../constants/constants";
@@ -40,6 +41,8 @@ const Orders = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
 	const handleSort = useCallback((key) => {
 		setSortConfig((prev) => ({
@@ -78,13 +81,26 @@ const Orders = () => {
 			: String(bValue).localeCompare(String(aValue));
 	});
 
-	const filteredOrders = sortedOrders.filter((order) => {
-		const searchTerm = searchQuery.toLowerCase();
-		const orderNumber = order.orderNumber?.toLowerCase() || '';
-		const customerName = order.customer?.name?.toLowerCase() || '';
-		
-		return orderNumber.includes(searchTerm) || customerName.includes(searchTerm);
-	});
+	const filteredOrders = useMemo(() => {
+		return sortedOrders.filter((order) => {
+			const searchTerm = searchQuery.toLowerCase();
+			const orderNumber = order.orderNumber?.toLowerCase() || '';
+			const customerName = order.customer?.name?.toLowerCase() || '';
+			
+			return orderNumber.includes(searchTerm) || customerName.includes(searchTerm);
+		});
+	}, [sortedOrders, searchQuery]);
+
+	const paginatedOrders = useMemo(() => {
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		return filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+	}, [filteredOrders, currentPage]);
+
+	const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
 
 	return (
 		<Container>
@@ -127,7 +143,7 @@ const Orders = () => {
 							</TableHeader>
 
 							<TableBody>
-								{filteredOrders.map((order, index) => (
+								{paginatedOrders.map((order, index) => (
 									<motion.tr
 										key={order.id}
 										initial={{ opacity: 0, y: 20 }}
@@ -186,6 +202,22 @@ const Orders = () => {
 							</TableBody>
 						</Table>
 					</div>
+
+					{filteredOrders.length > 0 ? (
+						<div className="mt-4 px-4">
+							<Pagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								onPageChange={handlePageChange}
+								itemsPerPage={itemsPerPage}
+								totalItems={filteredOrders.length}
+							/>
+						</div>
+					) : (
+						<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+							No orders found matching your search.
+						</div>
+					)}
 				</Card>
 			</div>
 

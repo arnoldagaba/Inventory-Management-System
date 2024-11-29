@@ -68,7 +68,11 @@ SearchResults.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const NotificationDropdown = ({ notifications, onClose, onNotificationClick }) => {
+const NotificationDropdown = ({
+	notifications,
+	onClose,
+	onNotificationClick,
+}) => {
 	if (notifications.length === 0) return null;
 
 	return (
@@ -159,7 +163,9 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	const userMenuRef = useClickOutside(() => setShowUserMenu(false));
 
 	const handleNotificationClick = (notification) => {
-		navigate("/notifications", { state: { selectedNotification: notification.id } });
+		navigate("/notifications", {
+			state: { selectedNotification: notification.id },
+		});
 	};
 
 	const handleSearchChange = (e) => {
@@ -191,13 +197,13 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 					)}
 
 					<Link to="/" className="flex items-center space-x-2">
-						<img 
-							src="/src/assets/InvenEase.webp" 
-							alt="Logo" 
-							className="h-8 w-8 rounded-xl object-cover" 
+						<img
+							src="/src/assets/InvenEase.webp"
+							alt="Logo"
+							className="h-8 w-8 rounded-xl object-cover"
 						/>
 						<span className="text-xl font-semibold text-gray-900 dark:text-white hidden sm:inline-block">
-								Dashboard
+							Dashboard
 						</span>
 					</Link>
 				</div>
@@ -233,12 +239,14 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 						size="icon"
 						onClick={toggleTheme}
 						className="hidden sm:flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700"
-						aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+						aria-label={
+							theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+						}
 					>
 						{theme === "dark" ? (
-							<SunIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+							<SunIcon className="h-7 w-7 text-gray-600 dark:text-gray-400" />
 						) : (
-							<MoonIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+							<MoonIcon className="h-7 w-7 text-gray-600 dark:text-gray-400" />
 						)}
 					</Button>
 
@@ -249,9 +257,9 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 							onClick={() => setShowNotifications(!showNotifications)}
 							className="relative"
 						>
-							<BellIcon className="h-5 w-5" />
+							<BellIcon className="h-7 w-7" />
 							{unreadNotifications.length > 0 && (
-								<span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
+								<span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
 									{unreadNotifications.length}
 								</span>
 							)}

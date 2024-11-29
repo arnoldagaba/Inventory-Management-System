@@ -4,7 +4,7 @@ import {
 	Route,
 	Navigate,
 } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { SearchProvider } from "./context/SearchContext";
 import { ToastContainer } from "react-toastify";
@@ -23,6 +23,52 @@ import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications/Notifications";
 import { NotificationsProvider } from "./context/NotificationsContext";
 import Stock from "./pages/Stock/Stock";
+import Landing from "./pages/Landing/Landing";
+
+const AppRoutes = () => {
+	const { currentUser } = useAuth();
+
+	return (
+		<Routes>
+			{/* Landing Page */}
+			<Route path="/landing" element={<Landing />} />
+
+			{/* Public Routes */}
+			<Route element={<PublicRoute />}>
+				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<SignUp />} />
+				<Route path="/reset-password" element={<ResetPassword />} />
+			</Route>
+
+			{/* Protected Routes */}
+			<Route element={<ProtectedRoute />}>
+				<Route element={<MainLayout />}>
+					<Route path="/" element={<Dashboard />} />
+					<Route path="/orders" element={<Orders />} />
+					<Route path="/products" element={<Products />} />
+					<Route path="/stock" element={<Stock />} />
+					<Route path="/analytics" element={<Analytics />} />
+					<Route path="/notifications" element={<Notifications />} />
+					<Route path="/settings" element={<Settings />} />
+				</Route>
+			</Route>
+
+			{/* Redirect root to landing for non-authenticated users */}
+			<Route
+				path="/"
+				element={
+					<Navigate
+						to={currentUser ? "/dashboard" : "/landing"}
+						replace
+					/>
+				}
+			/>
+
+			{/* 404 Route */}
+			<Route path="*" element={<NotFound />} />
+		</Routes>
+	);
+};
 
 const App = () => {
 	return (
@@ -31,33 +77,7 @@ const App = () => {
 				<AuthProvider>
 					<NotificationsProvider>
 						<SearchProvider>
-							<Routes>
-								{/* Public Routes */}
-								<Route element={<PublicRoute />}>
-									<Route path="/login" element={<Login />} />
-									<Route path="/signup" element={<SignUp />} />
-									<Route path="/reset-password" element={<ResetPassword />} />
-								</Route>
-
-								{/* Protected Routes */}
-								<Route element={<ProtectedRoute />}>
-									<Route element={<MainLayout />}>
-										<Route path="/" element={<Dashboard />} />
-										<Route path="/orders" element={<Orders />} />
-										<Route path="/products" element={<Products />} />
-										<Route path="/stock" element={<Stock />} />
-										<Route path="/analytics" element={<Analytics />} />
-										<Route path="/notifications" element={<Notifications />} />
-										<Route path="/settings" element={<Settings />} />
-									</Route>
-								</Route>
-
-								{/* Redirect root to dashboard if authenticated */}
-								<Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-								{/* 404 Route */}
-								<Route path="*" element={<NotFound />} />
-							</Routes>
+							<AppRoutes />
 							<ToastContainer
 								position="top-right"
 								autoClose={3000}

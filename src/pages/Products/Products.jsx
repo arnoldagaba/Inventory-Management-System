@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
 	PlusIcon,
@@ -20,6 +20,7 @@ import {
 	Button,
 	Input,
 	Tooltip,
+	Pagination,
 } from "../../components/ui";
 import { formatCurrency } from "../../utils/formatNumber";
 import {
@@ -39,6 +40,8 @@ const Products = () => {
 	const [selectedCategory, setSelectedCategory] = useState("all");
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
 	const handleSort = useCallback((key) => {
 		setSortConfig((prev) => ({
@@ -77,12 +80,25 @@ const Products = () => {
 			: String(bValue).localeCompare(String(aValue));
 	});
 
-	const filteredProducts = sortedProducts.filter(
-		(product) =>
-			(selectedCategory === "all" || product.category === selectedCategory) &&
-			(product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				product.sku.toLowerCase().includes(searchQuery.toLowerCase()))
-	);
+	const filteredProducts = useMemo(() => {
+		return sortedProducts.filter(
+			(product) =>
+				(selectedCategory === "all" || product.category === selectedCategory) &&
+				(product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+					product.sku.toLowerCase().includes(searchQuery.toLowerCase()))
+		);
+	}, [sortedProducts, selectedCategory, searchQuery]);
+
+	const paginatedProducts = useMemo(() => {
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+	}, [filteredProducts, currentPage]);
+
+	const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
 
 	return (
 		<Container>
@@ -154,7 +170,7 @@ const Products = () => {
 							</TableHeader>
 
 							<TableBody>
-								{filteredProducts.map((product, index) => (
+								{paginatedProducts.map((product, index) => (
 									<motion.tr
 										key={product.id}
 										initial={{ opacity: 0, y: 20 }}
@@ -228,6 +244,22 @@ const Products = () => {
 							</TableBody>
 						</Table>
 					</div>
+
+					{filteredProducts.length > 0 ? (
+						<div className="mt-4 px-4">
+							<Pagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								onPageChange={handlePageChange}
+								itemsPerPage={itemsPerPage}
+								totalItems={filteredProducts.length}
+							/>
+						</div>
+					) : (
+						<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+							No products found matching your search.
+						</div>
+					)}
 				</Card>
 			</div>
 

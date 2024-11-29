@@ -15,4 +15,5 @@ export {
 } from "./Table";
 export { Loading } from "./Loading";
 export { default as Tooltip } from './Tooltip';
-export { default as SidebarTooltip } from './SidebarTooltip'; 
+export { default as SidebarTooltip } from './SidebarTooltip';
+export { Pagination } from './Pagination'; 

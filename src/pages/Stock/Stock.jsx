@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
 	PlusIcon,
@@ -12,11 +12,13 @@ import { stockItems, stockStatusColors } from "../../constants/constants";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { StockDetails } from '../../components/StockDetails';
+import { Pagination } from '../../components/ui';
 
 const StockItem = ({ item, onUpdateStock, onClick }) => (
 	<motion.div
 		onClick={onClick}
 		initial={{ opacity: 0, y: 20 }}
+		
 		animate={{ opacity: 1, y: 0 }}
 		className="p-4 border-b last:border-0 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
 	>
@@ -103,6 +105,8 @@ const Stock = () => {
 	const [items, setItems] = useState(stockItems);
 	const [selectedItem, setSelectedItem] = useState(null);
 	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
 	const handleUpdateStock = (item, action) => {
 		if (action === "decrease" && item.quantity <= 0) {
@@ -138,11 +142,23 @@ const Stock = () => {
 		setIsDetailsOpen(true);
 	};
 
-	const filteredItems = items.filter(
-		(item) =>
+	const filteredItems = useMemo(() => {
+		return items.filter((item) =>
 			item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			item.sku.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+		);
+	}, [items, searchQuery]);
+
+	const paginatedItems = useMemo(() => {
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		return filteredItems.slice(startIndex, startIndex + itemsPerPage);
+	}, [filteredItems, currentPage]);
+
+	const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
 
 	const lowStockItems = filteredItems.filter(
 		(item) => item.status !== "Optimal"
@@ -194,7 +210,7 @@ const Stock = () => {
 
 				<Card>
 					<div className="divide-y dark:divide-gray-700">
-						{filteredItems.map((item) => (
+						{paginatedItems.map((item) => (
 							<StockItem
 								key={item.id}
 								item={item}
@@ -205,10 +221,22 @@ const Stock = () => {
 
 						{filteredItems.length === 0 && (
 							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
-								o items found matching your search.
+								No items found matching your search.
 							</div>
 						)}
 					</div>
+
+					{filteredItems.length > 0 && (
+						<div className="mt-4 px-4">
+							<Pagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								onPageChange={handlePageChange}
+								itemsPerPage={itemsPerPage}
+								totalItems={filteredItems.length}
+							/>
+						</div>
+					)}
 				</Card>
 			</div>
 

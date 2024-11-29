@@ -14,8 +14,9 @@ import AuthLayout from "../../components/layouts/AuthLayout";
 import { toast } from "react-toastify";
 
 const SignUp = () => {
-	const { signup, loading } = useAuth();
 	const navigate = useNavigate();
+	const { signup } = useAuth();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState({
@@ -59,12 +60,15 @@ const SignUp = () => {
 		e.preventDefault();
 
 		if (validateForm()) {
+			setIsLoading(true);
 			try {
 				await signup(formData.email, formData.password, formData.name);
-				toast.success("Account created successfully! Please log in.");
+				toast.success("Account created successfully! Please login to continue.");
 				navigate("/login");
-			} catch {
-				//TODO: Error handled by auth context
+			} catch (error) {
+				toast.error(error.message);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 	};
@@ -189,7 +193,7 @@ const SignUp = () => {
 					</label>
 				</div>
 
-				<Button type="submit" isLoading={loading} className="w-full">
+				<Button type="submit" isLoading={isLoading} className="w-full">
 					Create account
 				</Button>
 
