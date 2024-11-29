@@ -8,6 +8,8 @@ import {
 	UserCircleIcon,
 	CheckCircleIcon,
 	ExclamationCircleIcon,
+	SunIcon,
+	MoonIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "./ui";
 import { useAuth } from "../context/AuthContext";
@@ -230,9 +232,14 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 						variant="ghost"
 						size="icon"
 						onClick={toggleTheme}
-						className="hidden sm:flex"
+						className="hidden sm:flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700"
+						aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
 					>
-						{theme === "dark" ? "🌞" : "🌙"}
+						{theme === "dark" ? (
+							<SunIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+						) : (
+							<MoonIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+						)}
 					</Button>
 
 					<div className="relative" ref={notificationsRef}>

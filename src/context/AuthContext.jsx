@@ -60,7 +60,15 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Signup error:', error);
-      toast.error(error.message);
+      // Provide more specific error messages based on error code
+      const errorMessage = {
+        'auth/email-already-in-use': 'Email is already registered',
+        'auth/invalid-email': 'Invalid email address',
+        'auth/operation-not-allowed': 'Email/password accounts are not enabled',
+        'auth/weak-password': 'Password is too weak'
+      }[error.code] || error.message;
+      
+      toast.error(errorMessage);
       throw error;
     } finally {
       setLoading(false);

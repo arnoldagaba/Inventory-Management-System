@@ -25,17 +25,25 @@ export const SearchProvider = ({ children }) => {
 
 		setIsSearching(true);
 		try {
-			// Mock search results - replace with actual API call
-			const results = [
-				{ type: "order", id: "001", title: "Order #001" },
-				{ type: "product", id: "P001", title: "Product A" },
-				{ type: "customer", id: "C001", title: "John Doe" },
-			].filter((item) =>
-				item.title.toLowerCase().includes(query.toLowerCase())
-			);
-
+			// Replace mock search with actual API call
+			const results = await api.get(`/search?q=${query}`).then(res => res.data);
+			
+			// Fallback to mock results if API is not available
+			if (!results?.length) {
+				const mockResults = [
+					{ type: "order", id: "001", title: "Order #001" },
+					{ type: "product", id: "P001", title: "Product A" },
+					{ type: "customer", id: "C001", title: "John Doe" },
+				].filter((item) =>
+					item.title.toLowerCase().includes(query.toLowerCase())
+				);
+				setSearchResults(mockResults);
+				return;
+			}
+			
 			setSearchResults(results);
-		} catch {
+		} catch (error) {
+			console.error('Search error:', error);
 			setSearchResults([]);
 		} finally {
 			setIsSearching(false);

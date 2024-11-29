@@ -22,6 +22,7 @@ import Settings from "./pages/Settings/Settings";
 import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications/Notifications";
 import { NotificationsProvider } from "./context/NotificationsContext";
+import Stock from "./pages/Stock/Stock";
 
 const App = () => {
 	return (
@@ -44,6 +45,7 @@ const App = () => {
 										<Route path="/" element={<Dashboard />} />
 										<Route path="/orders" element={<Orders />} />
 										<Route path="/products" element={<Products />} />
+										<Route path="/stock" element={<Stock />} />
 										<Route path="/analytics" element={<Analytics />} />
 										<Route path="/notifications" element={<Notifications />} />
 										<Route path="/settings" element={<Settings />} />

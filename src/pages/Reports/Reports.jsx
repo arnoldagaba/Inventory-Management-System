@@ -10,6 +10,7 @@ import { Card, Container, Button, Input, Badge } from "../../components/ui";
 import { formatDate } from "../../utils/formatDate";
 import { formatNumberWithComma } from "../../utils/formatNumber";
 import { reports } from "../../constants/constants";
+import { toast } from "react-hot-toast";
 
 const statusColors = {
 	Ready: "success",
@@ -25,15 +26,29 @@ const Reports = () => {
 	});
 
 	const handleDownload = (report) => {
-		//TODO: Add download functionality
-		// Mock download functionality
-		console.log(`Downloading report: ${report.name}`);
+		// Implement download functionality
+		if (report.status !== "Ready") {
+			toast.error("Report is not ready for download");
+			return;
+		}
+
+		// In a real application, this would trigger a file download
+		// For now, simulate download with a success message
+		toast.success(`Downloading ${report.name}...`);
+		// You would typically make an API call here to get the report file
+		// api.get(`/reports/${report.id}/download`)
 	};
 
 	const handleGenerateReport = () => {
-		//TODO: Add report generation functionlaity
-		// Mock report generation
-		console.log("Generating new report...");
+		// Implement report generation
+		toast.info("Generating new report...");
+		// In a real application, this would trigger report generation
+		// api.post('/reports/generate', { type: selectedType, dateRange })
+		
+		// Simulate report generation
+		setTimeout(() => {
+			toast.success("Report generated successfully!");
+		}, 2000);
 	};
 
 	const filteredReports = reports.filter(

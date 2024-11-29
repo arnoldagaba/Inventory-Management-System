@@ -6,7 +6,7 @@ import {
 	ArrowDownIcon,
 	ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import { Card, Container, Button, Badge, Input } from "../../components/ui";
+import { Card, Container, Button, Badge, Input, Tooltip } from "../../components/ui";
 import { formatNumberWithComma } from "../../utils/formatNumber";
 import { stockItems, stockStatusColors } from "../../constants/constants";
 import { toast } from "react-toastify";
@@ -58,24 +58,26 @@ const StockItem = ({ item, onUpdateStock }) => (
 			</div>
 
 			<div className="flex space-x-2">
-				<Button
-					variant="secondary"
-					onClick={() => onUpdateStock(item, "decrease")}
-					className="p-2"
-					disabled={item.quantity <= 0}
-					title="Decrease stock"
-				>
-					<ArrowDownIcon className="h-4 w-4" />
-				</Button>
+				<Tooltip content="Decrease stock quantity" size="small">
+					<Button
+						variant="secondary"
+						onClick={() => onUpdateStock(item, "decrease")}
+						className="p-2"
+						disabled={item.quantity <= 0}
+					>
+						<ArrowDownIcon className="h-4 w-4" />
+					</Button>
+				</Tooltip>
 
-				<Button
-					variant="secondary"
-					onClick={() => onUpdateStock(item, "increase")}
-					className="p-2"
-					title="Increase stock"
-				>
-					<ArrowUpIcon className="h-4 w-4" />
-				</Button>
+				<Tooltip content="Increase stock quantity" size="small">
+					<Button
+						variant="secondary"
+						onClick={() => onUpdateStock(item, "increase")}
+						className="p-2"
+					>
+						<ArrowUpIcon className="h-4 w-4" />
+					</Button>
+				</Tooltip>
 			</div>
 		</div>
 	</motion.div>
@@ -171,7 +173,10 @@ const Stock = () => {
 						className="w-full sm:w-64"
 					/>
 
-					<Button onClick={() => toast.info("Add new stock item")}>
+					<Button 
+						onClick={() => toast.info("Add new stock item")}
+						className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
+					>
 						<PlusIcon className="h-5 w-5 mr-2" />
 						Add Item
 					</Button>

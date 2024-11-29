@@ -105,20 +105,6 @@ const Settings = () => {
 		{ id: "devices", label: "Trusted Devices", count: 3 },
 	];
 
-	// Add this function for testing
-	const testStorageAccess = async () => {
-		try {
-			const testFile = new File(['test'], 'test.txt', { type: 'text/plain' });
-			const testRef = ref(storage, 'test/test.txt');
-			await uploadBytes(testRef, testFile);
-			console.log('Test upload successful');
-			const url = await getDownloadURL(testRef);
-			console.log('Download URL:', url);
-		} catch (error) {
-			console.error('Storage test failed:', error);
-		}
-	};
-
 	return (
 		<Container>
 			<div className="space-y-6">
@@ -306,8 +292,6 @@ const Settings = () => {
 						</div>
 					</SettingsSection>
 				</motion.div>
-
-				<Button onClick={testStorageAccess}>Test Storage</Button>
 			</div>
 		</Container>
 	);

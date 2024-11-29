@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
 	PlusIcon,
-	MagnifyingGlassIcon,
 	EyeIcon,
 	PencilSquareIcon,
 	TrashIcon,
