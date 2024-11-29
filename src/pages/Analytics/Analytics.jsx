@@ -24,8 +24,8 @@ import {
 } from "../../constants/constants";
 
 const MetricCard = ({ label, value, trend }) => (
-	<Card>
-		<div className="flex items-start justify-between">
+	<Card className="h-full">
+		<div className="flex flex-col justify-between h-full">
 			<div>
 				<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
 					{label}
@@ -41,14 +41,16 @@ const MetricCard = ({ label, value, trend }) => (
 			</div>
 
 			{trend && (
-				<Badge
-					variant={trend > 0 ? "success" : "error"}
-					size="sm"
-					className="ml-2"
-				>
-					{trend > 0 ? "+" : ""}
-					{trend}%
-				</Badge>
+				<div className="mt-4">
+					<Badge
+						variant={trend > 0 ? "success" : "error"}
+						size="sm"
+						className="ml-2"
+					>
+						{trend > 0 ? "+" : ""}
+						{trend}%
+					</Badge>
+				</div>
 			)}
 		</div>
 	</Card>
@@ -87,13 +89,14 @@ const Analytics = () => {
 		<Container>
 			<div className="space-y-6">
 				{/* Metrics Grid */}
-				<Grid>
+				<Grid className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 					{Object.values(analyticsMetrics).map((metric, index) => (
 						<motion.div
 							key={metric.label}
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: index * 0.1 }}
+							className="h-full"
 						>
 							<MetricCard {...metric} />
 						</motion.div>

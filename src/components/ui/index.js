@@ -13,4 +13,5 @@ export {
   TableCell,
   TableCaption,
 } from "./Table";
-export { Loading } from "./Loading"; 
+export { Loading } from "./Loading";
+export { default as Tooltip } from './Tooltip'; 

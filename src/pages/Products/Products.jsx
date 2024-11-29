@@ -6,6 +6,7 @@ import {
 	EyeIcon,
 	PencilSquareIcon,
 	TrashIcon,
+	ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Card,
@@ -19,6 +20,7 @@ import {
 	Badge,
 	Button,
 	Input,
+	Tooltip,
 } from "../../components/ui";
 import { formatCurrency } from "../../utils/formatNumber";
 import {
@@ -89,27 +91,44 @@ const Products = () => {
 							placeholder="Search products..."
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
-							icon={MagnifyingGlassIcon}
 							className="w-full sm:w-64"
 						/>
 
-						<select
-							value={selectedCategory}
-							onChange={(e) => setSelectedCategory(e.target.value)}
-						>
-							<option value="all">All Categories</option>
-							{productCategories.map((category) => (
-								<option key={category} value={category}>
-									{category}
-								</option>
-							))}
-						</select>
+						<div className="relative w-56">
+							<select
+								value={selectedCategory}
+								onChange={(e) => setSelectedCategory(e.target.value)}
+								className="appearance-none w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 
+								text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+								focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors duration-200
+								hover:border-gray-400 dark:hover:border-gray-500 [-webkit-appearance:none] [-moz-appearance:none] [&::-ms-expand]:hidden"
+							>
+								<option value="all">All Categories</option>
+								{productCategories.map((category) => (
+									<option 
+										key={category} 
+										value={category}
+										className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+									>
+										{category}
+									</option>
+								))}
+							</select>
+							<div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+								<ChevronDownIcon className="h-4 w-4 text-gray-500" />
+							</div>
+						</div>
 					</div>
 
-					<Button onClick={() => toast.info("Add new product")}>
-						<PlusIcon className="h-5 w-5 mr-2" />
-						Add Product
-					</Button>
+					<Tooltip content="Create a new product">
+						<Button 
+							onClick={() => toast.info("Add new product")}
+							className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
+						>
+							<PlusIcon className="h-5 w-5 mr-2" />
+							Add Product
+						</Button>
+					</Tooltip>
 				</div>
 
 				<Card>
@@ -167,32 +186,38 @@ const Products = () => {
 
 										<TableCell>
 											<div className="flex items-center space-x-2">
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() => handleView(product)}
-													className="p-1"
-												>
-													<EyeIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="View Product">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={() => handleView(product)}
+														className="p-1"
+													>
+														<EyeIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={(e) => handleEdit(e, product)}
-													className="p-1"
-												>
-													<PencilSquareIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="Edit Product">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={(e) => handleEdit(e, product)}
+														className="p-1"
+													>
+														<PencilSquareIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={(e) => handleDelete(e, product)}
-													className="p-1 text-red-600 dark:text-red-400"
-												>
-													<TrashIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="Delete Product">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={(e) => handleDelete(e, product)}
+														className="p-1 text-red-600 dark:text-red-400"
+													>
+														<TrashIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 											</div>
 										</TableCell>
 									</motion.tr>

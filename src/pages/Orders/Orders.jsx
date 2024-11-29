@@ -19,6 +19,7 @@ import {
 	Badge,
 	Button,
 	Input,
+	Tooltip,
 } from "../../components/ui";
 import { formatDate } from "../../utils/formatDate";
 import { formatCurrency } from "../../utils/formatNumber";
@@ -93,10 +94,15 @@ const Orders = () => {
 						className="w-full sm:w-64"
 					/>
 
-					<Button onClick={() => toast.info("Add new order")}>
-						<PlusIcon className="h-5 w-5 mr-2" />
-						Add Order
-					</Button>
+					<Tooltip content="Create a new order">
+						<Button 
+							onClick={() => toast.info("Add new order")}
+							className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
+						>
+							<PlusIcon className="h-5 w-5 mr-2" />
+							Add Order
+						</Button>
+					</Tooltip>
 				</div>
 
 				<Card>
@@ -144,32 +150,38 @@ const Orders = () => {
 
 										<TableCell>
 											<div className="flex items-center space-x-2">
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() => handleView(order)}
-													className="p-1"
-												>
-													<EyeIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="View Order">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={() => handleView(order)}
+														className="p-1"
+													>
+														<EyeIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={(e) => handleEdit(e, order)}
-													className="p-1"
-												>
-													<PencilSquareIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="Edit Order">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={(e) => handleEdit(e, order)}
+														className="p-1"
+													>
+														<PencilSquareIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 												
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={(e) => handleDelete(e, order)}
-													className="p-1 text-red-600 dark:text-red-400"
-												>
-													<TrashIcon className="h-4 w-4" />
-												</Button>
+												<Tooltip content="Delete Order">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={(e) => handleDelete(e, order)}
+														className="p-1 text-red-600 dark:text-red-400"
+													>
+														<TrashIcon className="h-4 w-4" />
+													</Button>
+												</Tooltip>
 											</div>
 										</TableCell>
 									</motion.tr>

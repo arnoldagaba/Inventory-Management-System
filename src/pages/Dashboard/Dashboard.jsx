@@ -21,12 +21,12 @@ const StatCard = ({ title, value, icon: Icon, trend, color }) => (
 	<Card className="relative overflow-hidden">
 		<div className="flex items-start justify-between">
 			<div>
-				<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+				<p className="text-sm font-medium text-gray-600 dark:text-gray-300">
 					{title}
 				</p>
 
 				<div className="mt-2 flex items-baseline">
-					<p className="text-2xl font-semibold text-gray-900 dark:text-white">
+					<p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
 						<CountUp end={value} separator="," />
 					</p>
 
@@ -43,8 +43,20 @@ const StatCard = ({ title, value, icon: Icon, trend, color }) => (
 				</div>
 			</div>
 
-			<div className={`p-2 rounded-lg bg-${color}-100 dark:bg-${color}-900/20`}>
-				<Icon className={`h-6 w-6 text-${color}-600 dark:text-${color}-400`} />
+			<div className={`
+				p-2 rounded-lg 
+				${color === "blue" && "bg-blue-100 dark:bg-blue-900/25"}
+				${color === "green" && "bg-green-100 dark:bg-green-900/25"}
+				${color === "purple" && "bg-purple-100 dark:bg-purple-900/25"}
+				${color === "orange" && "bg-orange-100 dark:bg-orange-900/25"}
+			`}>
+				<Icon className={`
+					h-6 w-6 
+					${color === "blue" && "text-blue-600 dark:text-blue-400"}
+					${color === "green" && "text-green-600 dark:text-green-400"}
+					${color === "purple" && "text-purple-600 dark:text-purple-400"}
+					${color === "orange" && "text-orange-600 dark:text-orange-400"}
+				`} />
 			</div>
 		</div>
 	</Card>
@@ -71,6 +83,24 @@ const ChartCard = ({ title, children }) => (
 const Dashboard = () => {
 	const { theme } = useTheme();
 
+	const darkModeChartColors = {
+		grid: "#2D3748",        // Darker grid lines
+		text: "#E2E8F0",        // Lighter text
+		tooltip: "#2D3748",     // Darker tooltip background
+		line: "#90CDF4",        // Lighter blue for line chart
+		bar: "#90CDF4",         // Lighter blue for bar chart
+	};
+
+	const lightModeChartColors = {
+		grid: "#E5E7EB",
+		text: "#4B5563",
+		tooltip: "#FFFFFF",
+		line: "#3B82F6",
+		bar: "#3B82F6",
+	};
+
+	const chartColors = theme === "dark" ? darkModeChartColors : lightModeChartColors;
+
 	return (
 		<Container>
 			<div className="space-y-6">
@@ -95,24 +125,25 @@ const Dashboard = () => {
 							<LineChart data={dashboardChartData.sales}>
 								<CartesianGrid
 									strokeDasharray="3 3"
-									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
+									stroke={chartColors.grid}
 								/>
 
 								<XAxis
 									dataKey="name"
-									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+									stroke={chartColors.text}
 								/>
 
 								<YAxis
-									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+									stroke={chartColors.text}
 									tickFormatter={(value) => formatNumberWithComma(value)}
 								/>
 
 								<Tooltip
 									contentStyle={{
-										backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+										backgroundColor: chartColors.tooltip,
 										border: "none",
 										borderRadius: "0.5rem",
+										color: theme === "dark" ? "#E2E8F0" : "#1A202C",
 									}}
 									formatter={(value) => [`UGX ${formatNumberWithComma(value)}`]}
 								/>
@@ -120,9 +151,9 @@ const Dashboard = () => {
 								<Line
 									type="monotone"
 									dataKey="value"
-									stroke={theme === "dark" ? "#60a5fa" : "#3b82f6"}
+									stroke={chartColors.line}
 									strokeWidth={2}
-									dot={{ r: 4 }}
+									dot={{ r: 4, fill: chartColors.line }}
 								/>
 							</LineChart>
 						</ResponsiveContainer>
@@ -133,27 +164,28 @@ const Dashboard = () => {
 							<BarChart data={dashboardChartData.stock}>
 								<CartesianGrid
 									strokeDasharray="3 3"
-									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
+									stroke={chartColors.grid}
 								/>
 
 								<XAxis
 									dataKey="name"
-									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
+									stroke={chartColors.text}
 								/>
 
-								<YAxis stroke={theme === "dark" ? "#9ca3af" : "#4b5563"} />
+								<YAxis stroke={chartColors.text} />
 
 								<Tooltip
 									contentStyle={{
-										backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+										backgroundColor: chartColors.tooltip,
 										border: "none",
 										borderRadius: "0.5rem",
+										color: theme === "dark" ? "#E2E8F0" : "#1A202C",
 									}}
 								/>
 
 								<Bar
 									dataKey="stock"
-									fill={theme === "dark" ? "#60a5fa" : "#3b82f6"}
+									fill={chartColors.bar}
 									radius={[4, 4, 0, 0]}
 								/>
 							</BarChart>
@@ -163,7 +195,7 @@ const Dashboard = () => {
 
 				{/* Recent Activity */}
 				<Card>
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
 						Recent Activity
 					</h3>
 
@@ -177,13 +209,13 @@ const Dashboard = () => {
 								className="flex items-start space-x-3 py-3 border-b last:border-0 border-gray-200 dark:border-gray-700"
 								whileHover={{ x: 4 }}
 							>
-								<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500" />
+								<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500 dark:bg-blue-400" />
 
 								<div>
-									<span className="font-medium text-gray-900 dark:text-white">
+									<span className="font-medium text-gray-900 dark:text-gray-100">
 										{item.type}
 									</span>
-									<p className="text-sm text-gray-500 dark:text-gray-400">
+									<p className="text-sm text-gray-500 dark:text-gray-300">
 										{item.content}
 									</p>
 								</div>
