@@ -11,6 +11,7 @@ const Input = forwardRef(
             {label}
           </label>
         )}
+
         <div className="relative">
           {Icon && (
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -36,6 +37,7 @@ const Input = forwardRef(
             {...props}
           />
         </div>
+        
         {error && (
           <p className="mt-1 text-sm text-red-500">{error}</p>
         )}

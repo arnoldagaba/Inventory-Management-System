@@ -6,7 +6,7 @@ import {
 	CubeIcon,
 	ChartPieIcon,
 	Cog6ToothIcon,
-	XMarkIcon
+	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
@@ -31,6 +31,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 				<ul className="space-y-2">
 					{navItems.map((item) => {
 						const Icon = item.icon;
+
 						return (
 							<li key={item.name}>
 								<NavLink
@@ -46,6 +47,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 									}
 								>
 									<Icon className="h-5 w-5" />
+
 									<span>{item.name}</span>
 								</NavLink>
 							</li>

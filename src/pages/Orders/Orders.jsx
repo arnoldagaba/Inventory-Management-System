@@ -117,6 +117,7 @@ const Orders = () => {
 									))}
 								</TableRow>
 							</TableHeader>
+
 							<TableBody>
 								{filteredOrders.map((order, index) => (
 									<motion.tr
@@ -131,6 +132,7 @@ const Orders = () => {
 										<TableCell>{order.customer}</TableCell>
 										<TableCell>{formatDate(order.date)}</TableCell>
 										<TableCell>{formatCurrency(order.amount)}</TableCell>
+
 										<TableCell>
 											<Badge
 												variant={orderStatus[order.status].color}
@@ -139,6 +141,7 @@ const Orders = () => {
 												{orderStatus[order.status].label}
 											</Badge>
 										</TableCell>
+
 										<TableCell>
 											<div className="flex items-center space-x-2">
 												<Button
@@ -149,6 +152,7 @@ const Orders = () => {
 												>
 													<EyeIcon className="h-4 w-4" />
 												</Button>
+
 												<Button
 													variant="ghost"
 													size="sm"
@@ -157,6 +161,7 @@ const Orders = () => {
 												>
 													<PencilSquareIcon className="h-4 w-4" />
 												</Button>
+												
 												<Button
 													variant="ghost"
 													size="sm"

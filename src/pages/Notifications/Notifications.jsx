@@ -37,18 +37,22 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 			<div className="flex items-start justify-between gap-4">
 				<div className="flex items-start space-x-3">
 					<Icon className="h-6 w-6 text-gray-400 mt-1" />
+
 					<div>
 						<div className="flex items-center space-x-2">
 							<h3 className="font-medium text-gray-900 dark:text-white">
 								{notification.title}
 							</h3>
+
 							<Badge variant={priorityColors[notification.priority]} size="sm">
 								{notification.priority}
 							</Badge>
 						</div>
+
 						<p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
 							{notification.description}
 						</p>
+
 						<p className="mt-1 text-xs text-gray-400">
 							{notification.timestamp}
 						</p>
@@ -65,6 +69,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 							Mark as read
 						</Button>
 					)}
+
 					<Button
 						variant="secondary"
 						onClick={() => onDelete(notification.id)}
@@ -164,9 +169,11 @@ const Notifications = () => {
 								onDelete={handleDelete}
 							/>
 						))}
+						
 						{filteredItems.length === 0 && (
 							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
 								<BellIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+
 								<p>No notifications found.</p>
 							</div>
 						)}

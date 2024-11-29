@@ -83,6 +83,7 @@ const Settings = () => {
 									}))
 								}
 							/>
+
 							<Input
 								icon={GlobeAltIcon}
 								label="Email"
@@ -91,6 +92,7 @@ const Settings = () => {
 								value={profileData.email}
 								disabled
 							/>
+
 							<Input
 								icon={UserIcon}
 								label="Phone"
@@ -103,6 +105,7 @@ const Settings = () => {
 									}))
 								}
 							/>
+
 							<Button type="submit" isLoading={isLoading}>
 								Update Profile
 							</Button>
@@ -124,10 +127,12 @@ const Settings = () => {
 								>
 									<div className="flex items-center space-x-3">
 										<BellIcon className="h-5 w-5 text-gray-400" />
+
 										<span className="text-gray-700 dark:text-gray-300">
 											{setting.label}
 										</span>
 									</div>
+
 									<Badge
 										variant={setting.enabled ? "success" : "error"}
 										size="sm"
@@ -154,10 +159,12 @@ const Settings = () => {
 								>
 									<div className="flex items-center space-x-3">
 										<ShieldCheckIcon className="h-5 w-5 text-gray-400" />
+
 										<span className="text-gray-700 dark:text-gray-300">
 											{setting.label}
 										</span>
 									</div>
+
 									{typeof setting.enabled === "boolean" ? (
 										<Badge
 											variant={setting.enabled ? "success" : "error"}
@@ -185,10 +192,12 @@ const Settings = () => {
 						<div className="flex items-center justify-between">
 							<div className="flex items-center space-x-3">
 								<PaintBrushIcon className="h-5 w-5 text-gray-400" />
+
 								<span className="text-gray-700 dark:text-gray-300">
 									Dark Mode
 								</span>
 							</div>
+
 							<Button variant="secondary" onClick={toggleTheme}>
 								{theme === "dark" ? "Light Mode" : "Dark Mode"}
 							</Button>

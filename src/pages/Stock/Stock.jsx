@@ -15,18 +15,20 @@ import PropTypes from "prop-types";
 const StockItem = ({ item, onUpdateStock }) => (
 	<motion.div
 		initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			className="p-4 border-b last:border-0 dark:border-gray-700"
+		animate={{ opacity: 1, y: 0 }}
+		className="p-4 border-b last:border-0 dark:border-gray-700"
 	>
 		<div className="flex items-start justify-between">
 			<div>
 				<h3 className="font-medium text-gray-900 dark:text-white">
 					{item.name}
 				</h3>
+
 				<p className="text-sm text-gray-500 dark:text-gray-400">
 					SKU: {item.sku}
 				</p>
 			</div>
+
 			<Badge variant={stockStatusColors[item.status]} size="sm">
 				{item.status}
 			</Badge>
@@ -38,14 +40,17 @@ const StockItem = ({ item, onUpdateStock }) => (
 					<p className="text-sm text-gray-500 dark:text-gray-400">
 						Current Stock
 					</p>
+
 					<p className="text-lg font-semibold text-gray-900 dark:text-white">
 						{formatNumberWithComma(item.quantity)}
 					</p>
 				</div>
+
 				<div>
 					<p className="text-sm text-gray-500 dark:text-gray-400">
 						Reorder Point
 					</p>
+
 					<p className="text-lg font-semibold text-gray-900 dark:text-white">
 						{formatNumberWithComma(item.reorderPoint)}
 					</p>
@@ -62,6 +67,7 @@ const StockItem = ({ item, onUpdateStock }) => (
 				>
 					<ArrowDownIcon className="h-4 w-4" />
 				</Button>
+
 				<Button
 					variant="secondary"
 					onClick={() => onUpdateStock(item, "increase")}
@@ -110,9 +116,11 @@ const Stock = () => {
 							: "Optimal";
 					return { ...i, quantity: newQuantity, status: newStatus };
 				}
+
 				return i;
 			})
 		);
+
 		toast.success(
 			`${action === "increase" ? "Added" : "Removed"} 1 unit of ${item.name}`
 		);
@@ -139,10 +147,12 @@ const Stock = () => {
 						<Card className="bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700">
 							<div className="flex items-start space-x-3">
 								<ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mt-0.5" />
+
 								<div>
 									<h3 className="font-medium text-yellow-800 dark:text-yellow-300">
 										Low Stock Alert
 									</h3>
+
 									<p className="mt-1 text-sm text-yellow-700 dark:text-yellow-400">
 										{lowStockItems.length} items need attention
 									</p>
@@ -176,6 +186,7 @@ const Stock = () => {
 								onUpdateStock={handleUpdateStock}
 							/>
 						))}
+
 						{filteredItems.length === 0 && (
 							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
 								No items found matching your search.

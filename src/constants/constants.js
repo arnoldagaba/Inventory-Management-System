@@ -46,15 +46,15 @@ export const dashboardChartData = {
 		{ name: "Apr", value: 4500 },
 		{ name: "May", value: 6000 },
 		{ name: "Jun", value: 5500 },
-		{ name: "Jul", value: 7000 }
+		{ name: "Jul", value: 7000 },
 	],
 	stock: [
 		{ name: "Product A", stock: 45 },
 		{ name: "Product B", stock: 32 },
 		{ name: "Product C", stock: 18 },
 		{ name: "Product D", stock: 67 },
-		{ name: "Product E", stock: 25 }
-	]
+		{ name: "Product E", stock: 25 },
+	],
 };
 
 /******** Analytics Page *********/
@@ -134,24 +134,24 @@ export const orders = [
 export const orderStatus = {
 	PENDING: {
 		label: "Pending",
-		color: "warning"
+		color: "warning",
 	},
 	PROCESSING: {
 		label: "Processing",
-		color: "info"
+		color: "info",
 	},
 	SHIPPED: {
 		label: "Shipped",
-		color: "success"
+		color: "success",
 	},
 	DELIVERED: {
 		label: "Delivered",
-		color: "success"
+		color: "success",
 	},
 	CANCELLED: {
 		label: "Cancelled",
-		color: "error"
-	}
+		color: "error",
+	},
 };
 
 /******** Products Page *********/
@@ -205,85 +205,7 @@ export const stockStatusColors = {
 	Low: "warning",
 	Critical: "error",
 };
-
-/******** Table Headers *********/
-export const tableHeaders = {
-	orders: [
-		{ key: 'id', label: 'Order ID' },
-		{ key: 'customer', label: 'Customer' },
-		{ key: 'date', label: 'Date' },
-		{ key: 'amount', label: 'Amount' },
-		{ key: 'status', label: 'Status' },
-		{ key: 'actions', label: 'Actions' }
-	],
-	products: [
-		{ key: 'name', label: 'Product Name' },
-		{ key: 'sku', label: 'SKU' },
-		{ key: 'price', label: 'Price' },
-		{ key: 'stock', label: 'Stock' },
-		{ key: 'category', label: 'Category' },
-		{ key: 'actions', label: 'Actions' }
-	]
-};
-
-/******** Navigation *********/
-export const navItems = [
-	{
-		name: "Dashboard",
-		path: "/",
-		icon: "HomeIcon",
-	},
-	{
-		name: "Orders",
-		path: "/orders",
-		icon: "ShoppingBagIcon",
-	},
-	{
-		name: "Products",
-		path: "/products",
-		icon: "CubeIcon",
-	},
-	{
-		name: "Analytics",
-		path: "/analytics",
-		icon: "ChartPieIcon",
-	},
-	{
-		name: "Settings",
-		path: "/settings",
-		icon: "Cog6ToothIcon",
-	}
-];
-
-/******** Activity Feed *********/
-export const activity = [
-	{
-		type: "New Order",
-		content: "John Doe placed an order for UGX 250,000",
-		timestamp: "2024-03-08T10:30:00Z"
-	},
-	{
-		type: "Stock Alert",
-		content: "Product 'Laptop X1' is running low on stock",
-		timestamp: "2024-03-08T09:15:00Z"
-	},
-	{
-		type: "Payment Received",
-		content: "Payment received for Order #12345",
-		timestamp: "2024-03-08T08:45:00Z"
-	},
-	{
-		type: "New Customer",
-		content: "Jane Smith created an account",
-		timestamp: "2024-03-08T07:20:00Z"
-	},
-	{
-		type: "Shipment Update",
-		content: "Order #12344 has been delivered",
-		timestamp: "2024-03-08T06:10:00Z"
-	}
-];
-
+/******** Reports Page *********/
 export const reports = [
 	{
 		id: "REP001",
@@ -305,6 +227,55 @@ export const reports = [
 		type: "Analytics",
 		date: "2024-03-10",
 		status: "Ready",
+	},
+];
+
+/******** Table Headers *********/
+export const tableHeaders = {
+	orders: [
+		{ key: "id", label: "Order ID" },
+		{ key: "customer", label: "Customer" },
+		{ key: "date", label: "Date" },
+		{ key: "amount", label: "Amount" },
+		{ key: "status", label: "Status" },
+		{ key: "actions", label: "Actions" },
+	],
+	products: [
+		{ key: "name", label: "Product Name" },
+		{ key: "sku", label: "SKU" },
+		{ key: "price", label: "Price" },
+		{ key: "stock", label: "Stock" },
+		{ key: "category", label: "Category" },
+		{ key: "actions", label: "Actions" },
+	],
+};
+
+/******** Activity Feed *********/
+export const activity = [
+	{
+		type: "New Order",
+		content: "John Doe placed an order for UGX 250,000",
+		timestamp: "2024-03-08T10:30:00Z",
+	},
+	{
+		type: "Stock Alert",
+		content: "Product 'Laptop X1' is running low on stock",
+		timestamp: "2024-03-08T09:15:00Z",
+	},
+	{
+		type: "Payment Received",
+		content: "Payment received for Order #12345",
+		timestamp: "2024-03-08T08:45:00Z",
+	},
+	{
+		type: "New Customer",
+		content: "Jane Smith created an account",
+		timestamp: "2024-03-08T07:20:00Z",
+	},
+	{
+		type: "Shipment Update",
+		content: "Order #12344 has been delivered",
+		timestamp: "2024-03-08T06:10:00Z",
 	},
 ];
 

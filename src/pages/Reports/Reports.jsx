@@ -9,30 +9,7 @@ import {
 import { Card, Container, Button, Input, Badge } from "../../components/ui";
 import { formatDate } from "../../utils/formatDate";
 import { formatNumberWithComma } from "../../utils/formatNumber";
-
-const reports = [
-	{
-		id: "REP001",
-		name: "Monthly Sales Report",
-		type: "Sales",
-		date: "2024-03-01",
-		status: "Ready",
-	},
-	{
-		id: "REP002",
-		name: "Inventory Status",
-		type: "Inventory",
-		date: "2024-03-05",
-		status: "Processing",
-	},
-	{
-		id: "REP003",
-		name: "Customer Analytics",
-		type: "Analytics",
-		date: "2024-03-10",
-		status: "Ready",
-	},
-];
+import { reports } from "../../constants/constants";
 
 const statusColors = {
 	Ready: "success",
@@ -48,11 +25,13 @@ const Reports = () => {
 	});
 
 	const handleDownload = (report) => {
+		//TODO: Add download functionality
 		// Mock download functionality
 		console.log(`Downloading report: ${report.name}`);
 	};
 
 	const handleGenerateReport = () => {
+		//TODO: Add report generation functionlaity
 		// Mock report generation
 		console.log("Generating new report...");
 	};
@@ -60,7 +39,8 @@ const Reports = () => {
 	const filteredReports = reports.filter(
 		(report) =>
 			(selectedType === "all" || report.type === selectedType) &&
-			(!dateRange.start || new Date(report.date) >= new Date(dateRange.start)) &&
+			(!dateRange.start ||
+				new Date(report.date) >= new Date(dateRange.start)) &&
 			(!dateRange.end || new Date(report.date) <= new Date(dateRange.end))
 	);
 
@@ -90,6 +70,7 @@ const Reports = () => {
 								icon={CalendarIcon}
 								className="w-40"
 							/>
+
 							<Input
 								type="date"
 								value={dateRange.end}
@@ -120,10 +101,12 @@ const Reports = () => {
 							>
 								<div className="flex items-start space-x-4">
 									<DocumentTextIcon className="h-6 w-6 text-gray-400 mt-1" />
+
 									<div>
 										<h3 className="font-medium text-gray-900 dark:text-white">
 											{report.name}
 										</h3>
+
 										<div className="mt-1 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
 											<span>{report.type}</span>
 											<span>•</span>
@@ -136,6 +119,7 @@ const Reports = () => {
 									<Badge variant={statusColors[report.status]} size="sm">
 										{report.status}
 									</Badge>
+
 									{report.status === "Ready" && (
 										<Button
 											variant="secondary"
@@ -152,6 +136,7 @@ const Reports = () => {
 						{filteredReports.length === 0 && (
 							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
 								<FunnelIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+
 								<p>No reports found matching your filters.</p>
 							</div>
 						)}

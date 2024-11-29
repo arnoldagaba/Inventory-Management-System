@@ -21,7 +21,11 @@ import {
 	Input,
 } from "../../components/ui";
 import { formatCurrency } from "../../utils/formatNumber";
-import { products, productCategories, tableHeaders } from "../../constants/constants";
+import {
+	products,
+	productCategories,
+	tableHeaders,
+} from "../../constants/constants";
 import { toast } from "react-toastify";
 
 const Products = () => {
@@ -92,7 +96,6 @@ const Products = () => {
 						<select
 							value={selectedCategory}
 							onChange={(e) => setSelectedCategory(e.target.value)}
-							
 						>
 							<option value="all">All Categories</option>
 							{productCategories.map((category) => (
@@ -127,6 +130,7 @@ const Products = () => {
 									))}
 								</TableRow>
 							</TableHeader>
+
 							<TableBody>
 								{filteredProducts.map((product, index) => (
 									<motion.tr
@@ -145,8 +149,11 @@ const Products = () => {
 											/>
 											<span>{product.name}</span>
 										</TableCell>
+
 										<TableCell>{product.sku}</TableCell>
+
 										<TableCell>{formatCurrency(product.price)}</TableCell>
+
 										<TableCell>
 											<Badge
 												variant={product.stock > 20 ? "success" : "warning"}
@@ -155,7 +162,9 @@ const Products = () => {
 												{product.stock} in stock
 											</Badge>
 										</TableCell>
+
 										<TableCell>{product.category}</TableCell>
+
 										<TableCell>
 											<div className="flex items-center space-x-2">
 												<Button
@@ -166,6 +175,7 @@ const Products = () => {
 												>
 													<EyeIcon className="h-4 w-4" />
 												</Button>
+
 												<Button
 													variant="ghost"
 													size="sm"
@@ -174,6 +184,7 @@ const Products = () => {
 												>
 													<PencilSquareIcon className="h-4 w-4" />
 												</Button>
+
 												<Button
 													variant="ghost"
 													size="sm"

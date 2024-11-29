@@ -30,6 +30,7 @@ const MetricCard = ({ label, value, trend }) => (
 				<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
 					{label}
 				</p>
+
 				<p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
 					{typeof value === "number"
 						? value >= 1000
@@ -38,6 +39,7 @@ const MetricCard = ({ label, value, trend }) => (
 						: value}
 				</p>
 			</div>
+
 			{trend && (
 				<Badge
 					variant={trend > 0 ? "success" : "error"}
@@ -57,6 +59,7 @@ const ChartCard = ({ title, children }) => (
 		<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
 			{title}
 		</h3>
+
 		<div className="h-[300px]">{children}</div>
 	</Card>
 );
@@ -70,10 +73,7 @@ const Analytics = () => {
 				<div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
 					<p className="text-gray-900 dark:text-white font-medium">{label}</p>
 					{payload.map((entry, index) => (
-						<p
-							key={index}
-							className="text-sm text-gray-600 dark:text-gray-400"
-						>
+						<p key={index} className="text-sm text-gray-600 dark:text-gray-400">
 							{entry.name}: {formatCurrency(entry.value)}
 						</p>
 					))}
@@ -112,6 +112,7 @@ const Analytics = () => {
 											stopColor={theme === "dark" ? "#60a5fa" : "#3b82f6"}
 											stopOpacity={0.8}
 										/>
+
 										<stop
 											offset="95%"
 											stopColor={theme === "dark" ? "#60a5fa" : "#3b82f6"}
@@ -119,19 +120,24 @@ const Analytics = () => {
 										/>
 									</linearGradient>
 								</defs>
+
 								<CartesianGrid
 									strokeDasharray="3 3"
 									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
 								/>
+
 								<XAxis
 									dataKey="month"
 									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
 								/>
+
 								<YAxis
 									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
 									tickFormatter={(value) => formatCurrency(value)}
 								/>
+
 								<Tooltip content={<CustomTooltip />} />
+
 								<Area
 									type="monotone"
 									dataKey="revenue"
@@ -166,9 +172,7 @@ const Analytics = () => {
 									))}
 								</Pie>
 								<Legend />
-								<Tooltip
-									formatter={(value) => formatPercentage(value)}
-								/>
+								<Tooltip formatter={(value) => formatPercentage(value)} />
 							</PieChart>
 						</ResponsiveContainer>
 					</ChartCard>
@@ -180,12 +184,16 @@ const Analytics = () => {
 									strokeDasharray="3 3"
 									stroke={theme === "dark" ? "#374151" : "#e5e7eb"}
 								/>
+
 								<XAxis
 									dataKey="status"
 									stroke={theme === "dark" ? "#9ca3af" : "#4b5563"}
 								/>
+
 								<YAxis stroke={theme === "dark" ? "#9ca3af" : "#4b5563"} />
+
 								<Tooltip />
+
 								<Bar
 									dataKey="count"
 									fill={theme === "dark" ? "#60a5fa" : "#3b82f6"}

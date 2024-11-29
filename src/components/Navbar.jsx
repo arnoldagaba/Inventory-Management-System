@@ -34,6 +34,7 @@ const SearchResults = ({ results, onSelect, onClose }) => {
 					<p className="text-sm font-medium text-gray-900 dark:text-white">
 						{result.title}
 					</p>
+
 					<p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
 						{result.type}
 					</p>
@@ -68,6 +69,8 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 
 	const handleSearchResultSelect = (result) => {
 		clearSearch();
+
+		//TODO: Fix navigation handling based on result type
 		// Handle navigation based on result type
 		console.log("Selected:", result);
 	};
@@ -89,7 +92,7 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 					)}
 
 					<Link to="/" className="flex items-center space-x-2">
-						<img src="/logo.svg" alt="Logo" className="h-8 w-8" />
+						<img src="/src/assets/InvenEase.webp" alt="Logo" className="h-8 w-8" />
 						<span className="text-xl font-semibold text-gray-900 dark:text-white hidden sm:inline-block">
 							Dashboard
 						</span>
@@ -154,10 +157,12 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 									<p className="text-sm font-medium text-gray-900 dark:text-white">
 										{currentUser?.displayName}
 									</p>
+
 									<p className="text-xs text-gray-500 dark:text-gray-400">
 										{currentUser?.email}
 									</p>
 								</div>
+
 								<div className="p-2">
 									<Link
 										to="/settings"
@@ -165,6 +170,7 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 									>
 										Settings
 									</Link>
+
 									<button
 										onClick={logout}
 										className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
