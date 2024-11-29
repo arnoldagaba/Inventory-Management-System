@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
 	PlusIcon,
-	MagnifyingGlassIcon,
 	EyeIcon,
 	PencilSquareIcon,
 	TrashIcon,
@@ -21,17 +20,26 @@ import {
 	Input,
 	Tooltip,
 } from "../../components/ui";
-import { formatDate } from "../../utils/formatDate";
 import { formatCurrency } from "../../utils/formatNumber";
-import { orders, orderStatus, tableHeaders } from "../../constants/constants";
+import { orders, tableHeaders } from "../../constants/constants";
 import { toast } from "react-toastify";
+import { OrderDetails } from "../../components/OrderDetails";
+
+const statusColors = {
+	'Pending': 'warning',
+	'Processing': 'info',
+	'Completed': 'success',
+	'Cancelled': 'error'
+};
 
 const Orders = () => {
 	const [sortConfig, setSortConfig] = useState({
-		key: "date",
+		key: "orderDate",
 		direction: "desc",
 	});
 	const [searchQuery, setSearchQuery] = useState("");
+	const [selectedOrder, setSelectedOrder] = useState(null);
+	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
 	const handleSort = useCallback((key) => {
 		setSortConfig((prev) => ({
@@ -41,45 +49,42 @@ const Orders = () => {
 	}, []);
 
 	const handleView = useCallback((order) => {
-		toast.info(`Viewing order ${order.id}`);
+		setSelectedOrder(order);
+		setIsDetailsOpen(true);
 	}, []);
 
 	const handleEdit = useCallback((e, order) => {
 		e.stopPropagation();
-		toast.info(`Editing order ${order.id}`);
+		toast.info(`Editing order ${order.orderNumber}`);
 	}, []);
 
 	const handleDelete = useCallback((e, order) => {
 		e.stopPropagation();
-		toast.info(`Deleting order ${order.id}`);
+		toast.info(`Deleting order ${order.orderNumber}`);
 	}, []);
 
 	const sortedOrders = [...orders].sort((a, b) => {
 		const aValue = a[sortConfig.key];
 		const bValue = b[sortConfig.key];
 
-		if (sortConfig.key === "amount") {
+		if (sortConfig.key === "total") {
 			return sortConfig.direction === "asc"
 				? Number(aValue) - Number(bValue)
 				: Number(bValue) - Number(aValue);
 		}
 
-		if (sortConfig.key === "date") {
-			return sortConfig.direction === "asc"
-				? new Date(aValue) - new Date(bValue)
-				: new Date(bValue) - new Date(aValue);
-		}
-
 		return sortConfig.direction === "asc"
-			? aValue.localeCompare(bValue)
-			: bValue.localeCompare(aValue);
+			? String(aValue).localeCompare(String(bValue))
+			: String(bValue).localeCompare(String(aValue));
 	});
 
-	const filteredOrders = sortedOrders.filter(
-		(order) =>
-			order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			order.customer.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const filteredOrders = sortedOrders.filter((order) => {
+		const searchTerm = searchQuery.toLowerCase();
+		const orderNumber = order.orderNumber?.toLowerCase() || '';
+		const customerName = order.customer?.name?.toLowerCase() || '';
+		
+		return orderNumber.includes(searchTerm) || customerName.includes(searchTerm);
+	});
 
 	return (
 		<Container>
@@ -90,19 +95,16 @@ const Orders = () => {
 						placeholder="Search orders..."
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						icon={MagnifyingGlassIcon}
 						className="w-full sm:w-64"
 					/>
 
-					<Tooltip content="Create a new order">
-						<Button 
-							onClick={() => toast.info("Add new order")}
-							className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
-						>
-							<PlusIcon className="h-5 w-5 mr-2" />
-							Add Order
-						</Button>
-					</Tooltip>
+					<Button 
+						onClick={() => toast.info("Create new order")}
+						className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
+					>
+						<PlusIcon className="h-5 w-5 mr-2" />
+						New Order
+					</Button>
 				</div>
 
 				<Card>
@@ -134,20 +136,15 @@ const Orders = () => {
 										onClick={() => handleView(order)}
 										className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
 									>
-										<TableCell>{order.id}</TableCell>
-										<TableCell>{order.customer}</TableCell>
-										<TableCell>{formatDate(order.date)}</TableCell>
-										<TableCell>{formatCurrency(order.amount)}</TableCell>
-
+										<TableCell>{order.orderNumber}</TableCell>
+										<TableCell>{order.orderDate}</TableCell>
+										<TableCell>{order.customer.name}</TableCell>
 										<TableCell>
-											<Badge
-												variant={orderStatus[order.status].color}
-												size="sm"
-											>
-												{orderStatus[order.status].label}
+											<Badge variant={statusColors[order.status]}>
+												{order.status}
 											</Badge>
 										</TableCell>
-
+										<TableCell>{formatCurrency(order.total)}</TableCell>
 										<TableCell>
 											<div className="flex items-center space-x-2">
 												<Tooltip content="View Order">
@@ -171,7 +168,7 @@ const Orders = () => {
 														<PencilSquareIcon className="h-4 w-4" />
 													</Button>
 												</Tooltip>
-												
+
 												<Tooltip content="Delete Order">
 													<Button
 														variant="ghost"
@@ -191,6 +188,15 @@ const Orders = () => {
 					</div>
 				</Card>
 			</div>
+
+			<OrderDetails
+				order={selectedOrder}
+				isOpen={isDetailsOpen}
+				onClose={() => {
+					setIsDetailsOpen(false);
+					setSelectedOrder(null);
+				}}
+			/>
 		</Container>
 	);
 };

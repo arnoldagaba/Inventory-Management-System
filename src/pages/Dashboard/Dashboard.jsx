@@ -16,6 +16,7 @@ import { Card, Grid, Container, Badge } from "../../components/ui";
 import { useTheme } from "../../hooks/useTheme";
 import { formatNumberWithComma } from "../../utils/formatNumber";
 import { dashboardStats, dashboardChartData, activity } from "../../constants/constants";
+import { formatAxisLabel } from "../../utils/formatNumber";
 
 const StatCard = ({ title, value, icon: Icon, trend, color }) => (
 	<Card className="relative overflow-hidden">
@@ -72,11 +73,10 @@ StatCard.propTypes = {
 
 const ChartCard = ({ title, children }) => (
 	<Card>
-		<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+		<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
 			{title}
 		</h3>
-
-		<div className="h-[300px]">{children}</div>
+		<div className="h-[300px] w-full">{children}</div>
 	</Card>
 );
 
@@ -122,20 +122,31 @@ const Dashboard = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					<ChartCard title="Sales Overview">
 						<ResponsiveContainer width="100%" height="100%">
-							<LineChart data={dashboardChartData.sales}>
+							<LineChart
+								data={dashboardChartData.sales}
+								margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+							>
 								<CartesianGrid
 									strokeDasharray="3 3"
 									stroke={chartColors.grid}
+									vertical={false}
 								/>
 
 								<XAxis
 									dataKey="name"
 									stroke={chartColors.text}
+									tickFormatter={formatAxisLabel}
+									axisLine={false}
+									tickLine={false}
+									dy={10}
 								/>
 
 								<YAxis
 									stroke={chartColors.text}
-									tickFormatter={(value) => formatNumberWithComma(value)}
+									tickFormatter={(value) => formatAxisLabel(value)}
+									axisLine={false}
+									tickLine={false}
+									dx={-10}
 								/>
 
 								<Tooltip
@@ -145,7 +156,9 @@ const Dashboard = () => {
 										borderRadius: "0.5rem",
 										color: theme === "dark" ? "#E2E8F0" : "#1A202C",
 									}}
+									
 									formatter={(value) => [`UGX ${formatNumberWithComma(value)}`]}
+									labelFormatter={formatAxisLabel}
 								/>
 
 								<Line
@@ -154,6 +167,7 @@ const Dashboard = () => {
 									stroke={chartColors.line}
 									strokeWidth={2}
 									dot={{ r: 4, fill: chartColors.line }}
+									activeDot={{ r: 6 }}
 								/>
 							</LineChart>
 						</ResponsiveContainer>
@@ -161,18 +175,33 @@ const Dashboard = () => {
 
 					<ChartCard title="Stock Levels">
 						<ResponsiveContainer width="100%" height="100%">
-							<BarChart data={dashboardChartData.stock}>
+							<BarChart
+								data={dashboardChartData.stock}
+								margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+							>
 								<CartesianGrid
 									strokeDasharray="3 3"
 									stroke={chartColors.grid}
+									horizontal={true}
+									vertical={false}
 								/>
 
 								<XAxis
 									dataKey="name"
 									stroke={chartColors.text}
+									tickFormatter={formatAxisLabel}
+									axisLine={false}
+									tickLine={false}
+									dy={10}
 								/>
 
-								<YAxis stroke={chartColors.text} />
+								<YAxis
+									stroke={chartColors.text}
+									tickFormatter={formatAxisLabel}
+									axisLine={false}
+									tickLine={false}
+									dx={-10}
+								/>
 
 								<Tooltip
 									contentStyle={{
@@ -181,12 +210,15 @@ const Dashboard = () => {
 										borderRadius: "0.5rem",
 										color: theme === "dark" ? "#E2E8F0" : "#1A202C",
 									}}
+									formatter={(value) => [value]}
+									labelFormatter={(label) => `Product: ${label}`}
 								/>
 
 								<Bar
 									dataKey="stock"
 									fill={chartColors.bar}
 									radius={[4, 4, 0, 0]}
+									maxBarSize={50}
 								/>
 							</BarChart>
 						</ResponsiveContainer>

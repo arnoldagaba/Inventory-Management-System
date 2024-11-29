@@ -11,12 +11,14 @@ import { formatNumberWithComma } from "../../utils/formatNumber";
 import { stockItems, stockStatusColors } from "../../constants/constants";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
+import { StockDetails } from '../../components/StockDetails';
 
-const StockItem = ({ item, onUpdateStock }) => (
+const StockItem = ({ item, onUpdateStock, onClick }) => (
 	<motion.div
+		onClick={onClick}
 		initial={{ opacity: 0, y: 20 }}
 		animate={{ opacity: 1, y: 0 }}
-		className="p-4 border-b last:border-0 dark:border-gray-700"
+		className="p-4 border-b last:border-0 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
 	>
 		<div className="flex items-start justify-between">
 			<div>
@@ -93,11 +95,14 @@ StockItem.propTypes = {
 		status: PropTypes.string.isRequired,
 	}).isRequired,
 	onUpdateStock: PropTypes.func.isRequired,
+	onClick: PropTypes.func.isRequired,
 };
 
 const Stock = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [items, setItems] = useState(stockItems);
+	const [selectedItem, setSelectedItem] = useState(null);
+	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
 	const handleUpdateStock = (item, action) => {
 		if (action === "decrease" && item.quantity <= 0) {
@@ -126,6 +131,11 @@ const Stock = () => {
 		toast.success(
 			`${action === "increase" ? "Added" : "Removed"} 1 unit of ${item.name}`
 		);
+	};
+
+	const handleItemClick = (item) => {
+		setSelectedItem(item);
+		setIsDetailsOpen(true);
 	};
 
 	const filteredItems = items.filter(
@@ -189,17 +199,27 @@ const Stock = () => {
 								key={item.id}
 								item={item}
 								onUpdateStock={handleUpdateStock}
+								onClick={() => handleItemClick(item)}
 							/>
 						))}
 
 						{filteredItems.length === 0 && (
 							<div className="text-center py-8 text-gray-500 dark:text-gray-400">
-								No items found matching your search.
+								o items found matching your search.
 							</div>
 						)}
 					</div>
 				</Card>
 			</div>
+
+			<StockDetails
+				item={selectedItem}
+				isOpen={isDetailsOpen}
+				onClose={() => {
+					setIsDetailsOpen(false);
+					setSelectedItem(null);
+				}}
+			/>
 		</Container>
 	);
 };

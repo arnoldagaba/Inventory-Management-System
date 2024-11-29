@@ -116,26 +116,201 @@ export const chartColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 /******** Orders Page *********/
 export const orders = [
 	{
-		id: "001",
-		customer: "Alice",
-		status: "SHIPPED",
-		date: "2024-11-08",
-		amount: "300000",
+		id: "1",
+		orderNumber: "ORD-001",
+		orderDate: "2024-03-15",
+		status: "Pending",
+		total: 1250.00,
+		customer: {
+			name: "John Doe",
+			email: "john@example.com",
+			phone: "+1234567890"
+		},
+		shippingAddress: {
+			street: "123 Main St",
+			city: "New York",
+			state: "NY",
+			zipCode: "10001"
+		},
+		items: [
+			{
+				name: "Product A",
+				quantity: 2,
+				price: 500.00,
+				image: "https://via.placeholder.com/150"
+			},
+			{
+				name: "Product B",
+				quantity: 1,
+				price: 250.00,
+				image: "https://via.placeholder.com/150"
+			}
+		],
+		subtotal: 1000.00,
+		shipping: 150.00,
+		tax: 100.00,
+		timeline: [
+			{
+				status: "Order Placed",
+				date: "2024-03-15",
+				completed: true
+			},
+			{
+				status: "Processing",
+				date: "2024-03-16",
+				completed: false
+			}
+		]
 	},
 	{
-		id: "002",
-		customer: "Bob",
-		status: "PENDING",
-		date: "2024-11-07",
-		amount: "50000",
+		id: "2",
+		orderNumber: "ORD-002",
+		orderDate: "2024-03-14",
+		status: "Processing",
+		total: 850.00,
+		customer: {
+			name: "Jane Smith",
+			email: "jane@example.com",
+			phone: "+1234567891"
+		},
+		shippingAddress: {
+			street: "456 Oak Ave",
+			city: "Los Angeles",
+			state: "CA",
+			zipCode: "90001"
+		},
+		items: [
+			{
+				name: "Product C",
+				quantity: 3,
+				price: 200.00,
+				image: "https://via.placeholder.com/150"
+			}
+		],
+		subtotal: 600.00,
+		shipping: 150.00,
+		tax: 100.00,
+		timeline: [
+			{
+				status: "Order Placed",
+				date: "2024-03-14",
+				completed: true
+			},
+			{
+				status: "Payment Confirmed",
+				date: "2024-03-14",
+				completed: true
+			},
+			{
+				status: "Processing",
+				date: "2024-03-15",
+				completed: true
+			},
+			{
+				status: "Shipping",
+				date: "2024-03-16",
+				completed: false
+			}
+		]
 	},
 	{
-		id: "003",
-		customer: "Charlie",
-		status: "CANCELLED",
-		date: "2024-11-06",
-		amount: "550000",
+		id: "3",
+		orderNumber: "ORD-003",
+		orderDate: "2024-03-13",
+		status: "Completed",
+		total: 2100.00,
+		customer: {
+			name: "Robert Johnson",
+			email: "robert@example.com",
+			phone: "+1234567892"
+		},
+		shippingAddress: {
+			street: "789 Pine St",
+			city: "Chicago",
+			state: "IL",
+			zipCode: "60601"
+		},
+		items: [
+			{
+				name: "Product D",
+				quantity: 1,
+				price: 1500.00,
+				image: "https://via.placeholder.com/150"
+			},
+			{
+				name: "Product E",
+				quantity: 2,
+				price: 300.00,
+				image: "https://via.placeholder.com/150"
+			}
+		],
+		subtotal: 1800.00,
+		shipping: 200.00,
+		tax: 100.00,
+		timeline: [
+			{
+				status: "Order Placed",
+				date: "2024-03-13",
+				completed: true
+			},
+			{
+				status: "Processing",
+				date: "2024-03-13",
+				completed: true
+			},
+			{
+				status: "Shipped",
+				date: "2024-03-14",
+				completed: true
+			},
+			{
+				status: "Delivered",
+				date: "2024-03-15",
+				completed: true
+			}
+		]
 	},
+	{
+		id: "4",
+		orderNumber: "ORD-004",
+		orderDate: "2024-03-12",
+		status: "Cancelled",
+		total: 450.00,
+		customer: {
+			name: "Sarah Wilson",
+			email: "sarah@example.com",
+			phone: "+1234567893"
+		},
+		shippingAddress: {
+			street: "321 Elm St",
+			city: "Houston",
+			state: "TX",
+			zipCode: "77001"
+		},
+		items: [
+			{
+				name: "Product F",
+				quantity: 1,
+				price: 450.00,
+				image: "https://via.placeholder.com/150"
+			}
+		],
+		subtotal: 450.00,
+		shipping: 0.00,
+		tax: 0.00,
+		timeline: [
+			{
+				status: "Order Placed",
+				date: "2024-03-12",
+				completed: true
+			},
+			{
+				status: "Cancelled",
+				date: "2024-03-12",
+				completed: true
+			}
+		]
+	}
 ];
 
 export const orderStatus = {

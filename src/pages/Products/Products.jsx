@@ -28,6 +28,7 @@ import {
 	tableHeaders,
 } from "../../constants/constants";
 import { toast } from "react-toastify";
+import { ProductDetails } from '../../components/ProductDetails';
 
 const Products = () => {
 	const [sortConfig, setSortConfig] = useState({
@@ -36,6 +37,8 @@ const Products = () => {
 	});
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("all");
+	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
 	const handleSort = useCallback((key) => {
 		setSortConfig((prev) => ({
@@ -45,7 +48,8 @@ const Products = () => {
 	}, []);
 
 	const handleView = useCallback((product) => {
-		toast.info(`Viewing product ${product.name}`);
+		setSelectedProduct(product);
+		setIsDetailsOpen(true);
 	}, []);
 
 	const handleEdit = useCallback((e, product) => {
@@ -226,6 +230,15 @@ const Products = () => {
 					</div>
 				</Card>
 			</div>
+
+			<ProductDetails
+				product={selectedProduct}
+				isOpen={isDetailsOpen}
+				onClose={() => {
+					setIsDetailsOpen(false);
+					setSelectedProduct(null);
+				}}
+			/>
 		</Container>
 	);
 };

@@ -1,15 +1,18 @@
 import PropTypes from "prop-types";
 import { cn } from "../../utils/cn";
 
-const Card = ({ className, children }) => {
+export const Card = ({ className, children }) => {
   return (
     <div
       className={cn(
-        "rounded-lg border border-border bg-card p-6 shadow-sm",
+        "rounded-md border bg-white shadow-sm",
+        "border-gray-200 dark:border-gray-700",
+        "bg-white/80 dark:bg-gray-800/80",
+        "backdrop-blur-sm",
         className
       )}
     >
-      {children}
+      <div className="p-6">{children}</div>
     </div>
   );
 };
@@ -17,6 +20,4 @@ const Card = ({ className, children }) => {
 Card.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
-};
-
-export { Card }; 
+}; 
