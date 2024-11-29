@@ -95,27 +95,58 @@
   }
 }
 
-/* Scrollbar styles */
+/* Custom Scrollbars */
 @layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-
-  .scrollbar-none {
-    scrollbar-width: none;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar {
+  /* For Webkit browsers (Chrome, Safari) */
+  .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
-  .scrollbar-thin::-webkit-scrollbar-track {
+  .custom-scrollbar::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
 
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors;
+  }
+
+  /* For Firefox */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+}
+
+/* CSS Variables for scrollbar colors */
+:root {
+  --scrollbar-thumb: #D1D5DB; /* gray-300 */
+  --scrollbar-track: transparent;
+}
+
+.dark {
+  --scrollbar-thumb: #4B5563; /* gray-600 */
+  --scrollbar-track: transparent;
+}
+
+/* Apply custom scrollbar to specific elements */
+.notifications-dropdown,
+.search-results-dropdown,
+.notifications-list,
+.sidebar-nav,
+main {
+  @apply custom-scrollbar;
+}
+
+/* Hide scrollbar when not needed */
+@media (min-width: 768px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -128,18 +159,6 @@
 
 .animate-spin-slow {
   animation: spin 3s linear infinite;
-}
-
-/* Media query utilities */
-@responsive {
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 * {

@@ -7,34 +7,41 @@ export const authMessages = {
 };
 
 /******** Dashboard Page *********/
+import {
+	ShoppingBagIcon,
+	CreditCardIcon,
+	RectangleStackIcon,
+	UsersIcon,
+} from "@heroicons/react/24/outline";
+
 export const dashboardStats = [
 	{
 		title: "Total Orders",
 		value: 1240,
-		icon: "ShoppingBagIcon",
+		icon: ShoppingBagIcon,
 		trend: 12,
 		color: "blue",
 	},
 	{
 		title: "Revenue",
 		value: 43210,
-		icon: "BanknotesIcon",
-		trend: 8,
+		icon: CreditCardIcon,
+		trend: -5,
 		color: "green",
 	},
 	{
-		title: "Inventory Status",
-		value: 35,
-		icon: "RectangleStackIcon",
-		trend: -5,
-		color: "yellow",
+		title: "Products",
+		value: 789,
+		icon: RectangleStackIcon,
+		trend: 8,
+		color: "purple",
 	},
 	{
-		title: "Active Users",
-		value: 145,
-		icon: "UsersIcon",
+		title: "Customers",
+		value: 3200,
+		icon: UsersIcon,
 		trend: 15,
-		color: "purple",
+		color: "orange",
 	},
 ];
 
@@ -284,3 +291,98 @@ export const reportStatusColors = {
 	Processing: "warning",
 	Failed: "error",
 };
+
+/******** Notifications *********/
+export const notifications = [
+	{
+		id: 1,
+		type: "Stock",
+		title: "Low Stock Alert",
+		description: "Laptop X1 stock has fallen below the reorder point (5 units remaining)",
+		timestamp: "2024-03-08T09:15:00Z",
+		priority: "High",
+		read: false,
+	},
+	{
+		id: 2,
+		type: "Order",
+		title: "New Order Received",
+		description: "Order #1234 received from John Doe worth UGX 1,500,000",
+		timestamp: "2024-03-08T10:30:00Z",
+		priority: "Medium",
+		read: false,
+	},
+	{
+		id: 3,
+		type: "System",
+		title: "Backup Completed",
+		description: "System backup completed successfully",
+		timestamp: "2024-03-08T08:00:00Z",
+		priority: "Low",
+		read: true,
+	},
+	{
+		id: 4,
+		type: "Order",
+		title: "Order Delivered",
+		description: "Order #1230 has been marked as delivered",
+		timestamp: "2024-03-07T15:45:00Z",
+		priority: "Medium",
+		read: true,
+	},
+	{
+		id: 5,
+		type: "Stock",
+		title: "Critical Stock Alert",
+		description: "Smartphone Y2 is out of stock! Immediate reorder required",
+		timestamp: "2024-03-08T11:20:00Z",
+		priority: "High",
+		read: false,
+	},
+	{
+		id: 6,
+		type: "System",
+		title: "System Update Available",
+		description: "New system update v2.1.0 is available for installation",
+		timestamp: "2024-03-07T14:30:00Z",
+		priority: "Medium",
+		read: true,
+	},
+	{
+		id: 7,
+		type: "Order",
+		title: "Payment Received",
+		description: "Payment received for Order #1235 - UGX 2,300,000",
+		timestamp: "2024-03-08T12:15:00Z",
+		priority: "Medium",
+		read: false,
+	},
+	{
+		id: 8,
+		type: "Stock",
+		title: "Stock Adjustment",
+		description: "Manual stock adjustment made for Tablet Z3 (+10 units)",
+		timestamp: "2024-03-07T16:45:00Z",
+		priority: "Low",
+		read: true,
+	},
+];
+
+// Notification type icons mapping
+export const notificationTypeIcons = {
+	System: "BellIcon",
+	Stock: "FunnelIcon",
+	Order: "CheckCircleIcon",
+};
+
+// Notification priority colors
+export const notificationPriorityColors = {
+	High: "error",
+	Medium: "warning",
+	Low: "info",
+};
+
+// Unread notifications for navbar dropdown
+export const unreadNotifications = notifications
+	.filter(notification => !notification.read)
+	.slice(0, 5); // Only show latest 5 unread notifications

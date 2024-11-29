@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-	UserIcon,
 	EnvelopeIcon,
 	LockClosedIcon,
+	UserIcon,
 	EyeIcon,
 	EyeSlashIcon,
 } from "@heroicons/react/24/outline";

@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
 
 const AuthLayout = ({ children }) => {
+	const location = useLocation();
+	const isLoginPage = location.pathname === "/login";
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
 			<motion.div
@@ -16,13 +20,25 @@ const AuthLayout = ({ children }) => {
 						className="h-20 w-auto rounded-xl"
 					/>
 
-					<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-						Welcome back
-					</h2>
-					
-					<p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-						Sign in to your account to continue
-					</p>
+					{isLoginPage ? (
+						<>
+							<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+								Welcome back
+							</h2>
+							<p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+								Sign in to your account to continue
+							</p>
+						</>
+					) : (
+						<>
+							<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+								Create an account
+							</h2>
+							<p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+								Get started with InvenEase today
+							</p>
+						</>
+					)}
 				</div>
 
 				{children}

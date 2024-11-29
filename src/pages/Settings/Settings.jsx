@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import {
@@ -7,11 +7,15 @@ import {
 	ShieldCheckIcon,
 	GlobeAltIcon,
 	PaintBrushIcon,
+	CameraIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Container, Input, Button, Badge } from "../../components/ui";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { storage } from "../../config/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { cn } from "../../utils/cn";
 
 const SettingsSection = ({ title, children }) => (
 	<Card>
@@ -31,16 +35,55 @@ const Settings = () => {
 	const { theme, toggleTheme } = useTheme();
 	const { currentUser, updateProfile } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
+	const fileInputRef = useRef(null);
 	const [profileData, setProfileData] = useState({
 		name: currentUser?.displayName || "",
 		email: currentUser?.email || "",
 		phone: currentUser?.phone || "",
+		photoURL: currentUser?.photoURL || "",
 	});
+
+	const handleImageClick = () => {
+		fileInputRef.current?.click();
+	};
+
+	const handleImageChange = async (e) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		// Validate file type
+		if (!file.type.startsWith('image/')) {
+			toast.error('Please upload an image file');
+			return;
+		}
+
+		// Validate file size (max 5MB)
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error('Image must be less than 5MB');
+			return;
+		}
+
+		try {
+			setIsUploading(true);
+			await updateProfile({ 
+				...profileData, 
+				photo: file 
+			});
+			toast.success('Profile picture updated successfully!');
+		} catch (error) {
+			console.error(error);
+			toast.error('Failed to upload image');
+		} finally {
+			setIsUploading(false);
+		}
+	};
 
 	const handleProfileUpdate = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
 		try {
+			
 			await updateProfile(profileData);
 			toast.success("Profile updated successfully!");
 		} catch (_error) {
@@ -70,6 +113,51 @@ const Settings = () => {
 					animate={{ opacity: 1, y: 0 }}
 				>
 					<SettingsSection title="Profile Settings">
+						<div className="mb-6 flex justify-center">
+							<div className="relative">
+								<button
+									onClick={handleImageClick}
+									className="relative group"
+									disabled={isUploading}
+								>
+									<div className={cn(
+										"h-24 w-24 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700",
+										"group-hover:border-blue-500 transition-colors"
+									)}>
+										{profileData.photoURL ? (
+											<img
+												src={profileData.photoURL}
+												alt="Profile"
+												className="h-full w-full object-cover"
+											/>
+										) : (
+											<div className="h-full w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+												<UserIcon className="h-12 w-12 text-gray-400" />
+											</div>
+										)}
+									</div>
+									<div className={cn(
+										"absolute inset-0 flex items-center justify-center rounded-full",
+										"bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+									)}>
+										<CameraIcon className="h-8 w-8 text-white" />
+									</div>
+									{isUploading && (
+										<div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50">
+											<div className="h-8 w-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+										</div>
+									)}
+								</button>
+								<input
+									type="file"
+									ref={fileInputRef}
+									onChange={handleImageChange}
+									accept="image/*"
+									className="hidden"
+								/>
+							</div>
+						</div>
+
 						<form onSubmit={handleProfileUpdate} className="space-y-4">
 							<Input
 								icon={UserIcon}

@@ -1,7 +1,17 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  updateProfile as updateFirebaseProfile,
+  onAuthStateChanged
+} from "firebase/auth";
+import { auth, storage } from "../config/firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const AuthContext = createContext();
 
@@ -14,116 +24,134 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const login = useCallback(async (email, password) => {
+  useEffect(() => {
+    console.log('Setting up auth state listener...');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', user);
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const signup = async (email, password, name) => {
     setLoading(true);
     try {
-      // Mock API call - replace with actual authentication
-      const user = {
-        id: "1",
-        email,
-        displayName: "John Doe",
-        photoURL: "https://via.placeholder.com/150",
-      };
+      // Create the user
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
       
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("authToken", "mock-token");
-      setCurrentUser(user);
+      // Update profile
+      await updateFirebaseProfile(user, { 
+        displayName: name,
+        photoURL: "https://via.placeholder.com/150"
+      });
+      
+      // Verify the user was created
+      if (auth.currentUser) {
+        toast.success("Account created successfully!");
+        navigate("/login");
+      } else {
+        throw new Error("Failed to create user account");
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (email, password) => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       toast.success("Logged in successfully!");
       navigate("/");
     } catch (error) {
-      toast.error(error.message || "Failed to login");
+      toast.error("Invalid email or password");
       throw error;
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
 
-  const signup = useCallback(async (email, password, name) => {
-    setLoading(true);
+  const logout = async () => {
     try {
-      // Mock API call - replace with actual registration
-      const user = {
-        id: "1",
-        email,
-        displayName: name,
-        photoURL: "https://via.placeholder.com/150",
-      };
-      
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("authToken", "mock-token");
-      setCurrentUser(user);
-      toast.success("Account created successfully!");
-      navigate("/");
-    } catch (error) {
-      toast.error(error.message || "Failed to create account");
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  const logout = useCallback(async () => {
-    try {
-      // Mock API call - replace with actual logout
-      localStorage.removeItem("user");
-      localStorage.removeItem("authToken");
-      setCurrentUser(null);
+      await signOut(auth);
       toast.success("Logged out successfully!");
       navigate("/login");
     } catch (error) {
-      toast.error(error.message || "Failed to logout");
+      toast.error("Failed to logout");
       throw error;
     }
-  }, [navigate]);
+  };
 
-  const resetPassword = useCallback(async (email) => {
+  const resetPassword = async (email) => {
     setLoading(true);
     try {
-      // Mock API call - replace with actual password reset
+      await sendPasswordResetEmail(auth, email);
       toast.success("Password reset email sent!");
       navigate("/login");
     } catch (error) {
-      toast.error(error.message || "Failed to send reset email");
+      toast.error("Failed to send reset email");
       throw error;
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
 
-  const updateProfile = useCallback(async (data) => {
+  const updateProfile = async (data) => {
     setLoading(true);
     try {
-      // Mock API call - replace with actual profile update
-      const updatedUser = { ...currentUser, ...data };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setCurrentUser(updatedUser);
+      const updates = { displayName: data.name };
+      
+      // Handle photo upload
+      if (data.photo instanceof File) {
+        // Delete old photo if exists
+        if (currentUser?.photoURL && currentUser.photoURL.includes('firebasestorage')) {
+          const oldPhotoRef = ref(storage, `profile-pictures/${currentUser.uid}`);
+          await deleteObject(oldPhotoRef).catch(console.error);
+        }
+
+        // Upload new photo
+        const photoRef = ref(storage, `profile-pictures/${currentUser.uid}`);
+        const photoSnapshot = await uploadBytes(photoRef, data.photo);
+        updates.photoURL = await getDownloadURL(photoSnapshot.ref);
+      }
+
+      await updateFirebaseProfile(auth.currentUser, updates);
+      setCurrentUser(prev => ({ ...prev, ...updates }));
       toast.success("Profile updated successfully!");
     } catch (error) {
-      toast.error(error.message || "Failed to update profile");
+      console.error(error);
+      toast.error("Failed to update profile");
       throw error;
     } finally {
       setLoading(false);
     }
-  }, [currentUser]);
+  };
 
   const value = {
     currentUser,
     loading,
-    login,
     signup,
+    login,
     logout,
     resetPassword,
     updateProfile,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
 
 AuthProvider.propTypes = {

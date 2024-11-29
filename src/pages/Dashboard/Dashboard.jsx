@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import {
@@ -48,6 +49,14 @@ const StatCard = ({ title, value, icon: Icon, trend, color }) => (
 		</div>
 	</Card>
 );
+
+StatCard.propTypes = {
+	title: PropTypes.string.isRequired,
+	value: PropTypes.number.isRequired,
+	icon: PropTypes.elementType.isRequired,
+	trend: PropTypes.number,
+	color: PropTypes.string.isRequired,
+};
 
 const ChartCard = ({ title, children }) => (
 	<Card>
@@ -169,7 +178,7 @@ const Dashboard = () => {
 								whileHover={{ x: 4 }}
 							>
 								<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500" />
-								
+
 								<div>
 									<span className="font-medium text-gray-900 dark:text-white">
 										{item.type}

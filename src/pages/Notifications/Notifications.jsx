@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
 	BellIcon,
@@ -7,14 +7,12 @@ import {
 	FunnelIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Container, Button, Badge } from "../../components/ui";
-import { formatDate } from "../../utils/formatDate";
-import { notifications } from "../../constants/constants";
-
-const priorityColors = {
-	High: "error",
-	Medium: "warning",
-	Low: "info",
-};
+import { getRelativeTime } from "../../utils/formatDate";
+import { useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useNotifications } from "../../context/NotificationsContext";
+import { notificationPriorityColors } from "../../constants/constants";
+import { cn } from "../../utils/cn";
 
 const typeIcons = {
 	System: BellIcon,
@@ -27,9 +25,11 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 
 	return (
 		<motion.div
+			id={`notification-${notification.id}`}
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, x: -20 }}
+			
 			className={`p-4 border-b last:border-0 dark:border-gray-700 ${
 				!notification.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
 			}`}
@@ -44,7 +44,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 								{notification.title}
 							</h3>
 
-							<Badge variant={priorityColors[notification.priority]} size="sm">
+							<Badge variant={notificationPriorityColors[notification.priority]} size="sm">
 								{notification.priority}
 							</Badge>
 						</div>
@@ -54,7 +54,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 						</p>
 
 						<p className="mt-1 text-xs text-gray-400">
-							{notification.timestamp}
+							{getRelativeTime(notification.timestamp)}
 						</p>
 					</div>
 				</div>
@@ -71,7 +71,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete }) => {
 					)}
 
 					<Button
-						variant="secondary"
+						variant="ghost"
 						onClick={() => onDelete(notification.id)}
 						className="p-1 text-red-600 dark:text-red-400"
 					>
@@ -98,28 +98,30 @@ NotificationItem.propTypes = {
 };
 
 const Notifications = () => {
+	const location = useLocation();
+	const selectedNotificationId = location.state?.selectedNotification;
 	const [selectedType, setSelectedType] = useState("all");
-	const [items, setItems] = useState(notifications);
+	const {
+		notifications: items,
+		markAsRead,
+		markAllAsRead,
+		deleteNotification: handleDelete,
+		clearAll: handleClearAll,
+	} = useNotifications();
 
-	const handleMarkAsRead = (id) => {
-		setItems((prev) =>
-			prev.map((item) =>
-				item.id === id ? { ...item, read: true } : item
-			)
-		);
-	};
-
-	const handleDelete = (id) => {
-		setItems((prev) => prev.filter((item) => item.id !== id));
-	};
-
-	const handleMarkAllAsRead = () => {
-		setItems((prev) => prev.map((item) => ({ ...item, read: true })));
-	};
-
-	const handleClearAll = () => {
-		setItems([]);
-	};
+	useEffect(() => {
+		if (selectedNotificationId) {
+			const element = document.getElementById(`notification-${selectedNotificationId}`);
+			if (element) {
+				element.scrollIntoView({ behavior: "smooth" });
+				element.classList.add("bg-blue-50", "dark:bg-blue-900/20");
+				setTimeout(() => {
+					element.classList.remove("bg-blue-50", "dark:bg-blue-900/20");
+				}, 3000);
+				markAsRead(selectedNotificationId);
+			}
+		}
+	}, [selectedNotificationId, markAsRead]);
 
 	const filteredItems = items.filter(
 		(item) => selectedType === "all" || item.type === selectedType
@@ -131,21 +133,32 @@ const Notifications = () => {
 		<Container>
 			<div className="space-y-6">
 				<div className="flex flex-col sm:flex-row justify-between gap-4">
-					<div className="flex flex-col sm:flex-row gap-4">
+					<div className="flex flex-col sm:flex-row items-center gap-4">
 						<select
 							value={selectedType}
 							onChange={(e) => setSelectedType(e.target.value)}
-							className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+							
+							className={cn(
+								"w-full sm:w-auto px-3 py-2 border rounded-lg text-sm",
+								"bg-white dark:bg-gray-700",
+								"border-gray-300 dark:border-gray-600",
+								"text-gray-900 dark:text-white",
+								"focus:outline-none focus:ring-2 focus:ring-blue-500"
+							)}
 						>
-							<option value="all">All Types</option>
-							<option value="System">System</option>
-							<option value="Stock">Stock</option>
-							<option value="Order">Order</option>
+							<option value="all">All Notifications</option>
+							<option value="System">System Notifications</option>
+							<option value="Stock">Stock Updates</option>
+							<option value="Order">Order Updates</option>
 						</select>
 
 						{unreadCount > 0 && (
-							<Button variant="secondary" onClick={handleMarkAllAsRead}>
-								Mark all as read
+							<Button 
+								variant="secondary" 
+								onClick={markAllAsRead}
+								className="w-full sm:w-auto whitespace-nowrap"
+							>
+								Mark all as read ({unreadCount})
 							</Button>
 						)}
 					</div>
@@ -153,19 +166,22 @@ const Notifications = () => {
 					<Button
 						variant="secondary"
 						onClick={handleClearAll}
-						className="text-red-600 dark:text-red-400"
+						className={cn(
+							"w-full sm:w-auto whitespace-nowrap",
+							"text-red-600 dark:text-red-400"
+						)}
 					>
 						Clear All
 					</Button>
 				</div>
 
 				<Card>
-					<div className="divide-y dark:divide-gray-700">
+					<div className="divide-y dark:divide-gray-700 notifications-list custom-scrollbar">
 						{filteredItems.map((notification) => (
 							<NotificationItem
 								key={notification.id}
 								notification={notification}
-								onMarkAsRead={handleMarkAsRead}
+								onMarkAsRead={markAsRead}
 								onDelete={handleDelete}
 							/>
 						))}

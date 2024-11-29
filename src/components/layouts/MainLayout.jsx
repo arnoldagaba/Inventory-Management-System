@@ -4,15 +4,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import { SearchProvider } from "../../context/SearchContext";
+import { cn } from "../../utils/cn";
 
 const MainLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      if (width >= 768) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -20,6 +23,10 @@ const MainLayout = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const toggleMinimized = () => {
+    setIsMinimized(prev => !prev);
+  };
 
   return (
     <SearchProvider>
@@ -30,17 +37,20 @@ const MainLayout = () => {
           isMobile={isMobile}
         />
 
-        <div className="flex h-[calc(100vh-4rem)] pt-16">
+        <div className="flex pt-16">
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
             setIsMobileMenuOpen={setIsMobileMenuOpen}
             isMobile={isMobile}
+            isMinimized={isMinimized}
+            toggleMinimized={toggleMinimized}
           />
 
           <main
-            className={`flex-1 overflow-y-auto p-4 transition-all duration-300
-              ${isMobileMenuOpen ? "opacity-50 lg:opacity-100" : "opacity-100"}
-              ${isMobile ? "w-full" : "w-[calc(100%-16rem)]"}`}
+            className={cn(
+              "flex-1 p-4 transition-all duration-300 custom-scrollbar",
+              isMobile ? "w-full" : isMinimized ? "ml-20" : "ml-60"
+            )}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -50,7 +60,9 @@ const MainLayout = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.2 }}
               >
-                <Outlet />
+                <div className="mx-auto max-w-7xl">
+                  <Outlet />
+                </div>
               </motion.div>
             </AnimatePresence>
           </main>
