@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
 	HomeIcon,
@@ -25,57 +25,65 @@ const navItems = [
 ];
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile, isMinimized, toggleMinimized }) => {
+	const location = useLocation();
+
+	const handleNavClick = (path) => {
+		if (isMobile) {
+			setIsMobileMenuOpen(false);
+		}
+	};
+
 	return (
 		<motion.aside
 			initial={isMobile ? { x: -240 } : false}
 			animate={isMobile ? { x: isMobileMenuOpen ? 0 : -240 } : false}
 			className={cn(
 				"fixed left-0 top-16 bottom-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300",
-				"overflow-hidden",
+				"flex flex-col",
 				isMobile ? "shadow-lg" : "",
 				isMinimized ? "w-20" : "w-60",
 				!isMobile && !isMobileMenuOpen ? "hidden md:block" : ""
 			)}
 		>
-			<nav className="h-full flex flex-col relative">
-				{isMobile ? (
-					<div className="flex justify-end p-4 sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setIsMobileMenuOpen(false)}
-							className="md:hidden"
-							aria-label="Close menu"
-						>
-							<XMarkIcon className="h-6 w-6" />
-						</Button>
-					</div>
-				) : (
-					<div className="flex justify-end p-4 sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={toggleMinimized}
-							className="hidden md:flex"
-							aria-label={isMinimized ? "Expand menu" : "Minimize menu"}
-						>
-							{isMinimized ? (
-								<ChevronRightIcon className="h-6 w-6" />
-							) : (
-								<ChevronLeftIcon className="h-6 w-6" />
-							)}
-						</Button>
-					</div>
-				)}
+			{isMobile ? (
+				<div className="p-4 border-b border-gray-200 dark:border-gray-700">
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => setIsMobileMenuOpen(false)}
+						className="md:hidden"
+						aria-label="Close menu"
+					>
+						<XMarkIcon className="h-6 w-6" />
+					</Button>
+				</div>
+			) : (
+				<div className="p-4 border-b border-gray-200 dark:border-gray-700">
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={toggleMinimized}
+						className="hidden md:flex"
+						aria-label={isMinimized ? "Expand menu" : "Minimize menu"}
+					>
+						{isMinimized ? (
+							<ChevronRightIcon className="h-6 w-6" />
+						) : (
+							<ChevronLeftIcon className="h-6 w-6" />
+						)}
+					</Button>
+				</div>
+			)}
 
-				<div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
+			<div className="flex-1 overflow-y-auto">
+				<nav className="px-4 py-3">
 					<ul className="space-y-2">
 						{navItems.map((item) => {
 							const Icon = item.icon;
 							const link = (
 								<NavLink
 									to={item.path}
-									onClick={() => isMobile && setIsMobileMenuOpen(false)}
+									onClick={() => handleNavClick(item.path)}
 									className={({ isActive }) =>
 										cn(
 											"flex items-center px-4 py-2.5 rounded-lg transition-colors",
@@ -104,8 +112,8 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile, isMinimized,
 							);
 						})}
 					</ul>
-				</div>
-			</nav>
+				</nav>
+			</div>
 		</motion.aside>
 	);
 };

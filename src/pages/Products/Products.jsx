@@ -23,13 +23,10 @@ import {
 	Pagination,
 } from "../../components/ui";
 import { formatCurrency } from "../../utils/formatNumber";
-import {
-	products,
-	productCategories,
-	tableHeaders,
-} from "../../constants/constants";
+import { products, productCategories } from "../../constants/constants";
 import { toast } from "react-toastify";
 import { ProductDetails } from '../../components/ProductDetails';
+import { cn } from "../../utils/cn";
 
 const Products = () => {
 	const [sortConfig, setSortConfig] = useState({
@@ -103,32 +100,33 @@ const Products = () => {
 	return (
 		<Container>
 			<div className="space-y-6">
-				<div className="flex flex-col sm:flex-row justify-between gap-4">
-					<div className="flex flex-col sm:flex-row gap-4">
+				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+					<div className="flex flex-col gap-4 sm:flex-row sm:items-center flex-1 max-w-2xl">
 						<Input
 							type="text"
 							placeholder="Search products..."
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
-							className="w-full sm:w-64"
+							className="w-full sm:w-80"
 						/>
 
-						<div className="relative w-56">
+						<div className="relative w-full sm:w-48">
 							<select
 								value={selectedCategory}
 								onChange={(e) => setSelectedCategory(e.target.value)}
-								className="appearance-none w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 
-								text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-								focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors duration-200
-								hover:border-gray-400 dark:hover:border-gray-500 [-webkit-appearance:none] [-moz-appearance:none] [&::-ms-expand]:hidden"
+								className={cn(
+									"w-full px-3 py-2 pr-8 rounded-lg appearance-none",
+									"border border-gray-300 dark:border-gray-600",
+									"bg-white dark:bg-gray-800",
+									"text-gray-900 dark:text-gray-100",
+									"focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400",
+									"focus:border-blue-500 dark:focus:border-blue-400",
+									"outline-none transition-colors duration-200"
+								)}
 							>
 								<option value="all">All Categories</option>
 								{productCategories.map((category) => (
-									<option 
-										key={category} 
-										value={category}
-										className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-									>
+									<option key={category} value={category}>
 										{category}
 									</option>
 								))}
@@ -142,7 +140,7 @@ const Products = () => {
 					<Tooltip content="Create a new product">
 						<Button 
 							onClick={() => toast.info("Add new product")}
-							className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white dark:text-gray-100 transition-colors duration-200 whitespace-nowrap inline-flex items-center"
+							className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
 						>
 							<PlusIcon className="h-5 w-5 mr-2" />
 							Add Product
@@ -150,22 +148,17 @@ const Products = () => {
 					</Tooltip>
 				</div>
 
-				<Card>
+				<Card className="overflow-hidden">
 					<div className="overflow-x-auto">
 						<Table>
 							<TableHeader>
 								<TableRow>
-									{tableHeaders.products.map(({ key, label }) => (
-										<TableHead
-											key={key}
-											onClick={() => handleSort(key)}
-											className="cursor-pointer group"
-										>
-											<div className="flex items-center space-x-1">
-												<span>{label}</span>
-											</div>
-										</TableHead>
-									))}
+									<TableHead>Product</TableHead>
+									<TableHead className="hidden md:table-cell">SKU</TableHead>
+									<TableHead>Price</TableHead>
+									<TableHead>Stock</TableHead>
+									<TableHead className="hidden lg:table-cell">Category</TableHead>
+									<TableHead>Actions</TableHead>
 								</TableRow>
 							</TableHeader>
 
@@ -179,16 +172,27 @@ const Products = () => {
 										onClick={() => handleView(product)}
 										className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
 									>
-										<TableCell className="flex items-center space-x-3">
-											<img
-												src={product.image}
-												alt={product.name}
-												className="h-10 w-10 rounded-lg object-cover"
-											/>
-											<span>{product.name}</span>
+										<TableCell>
+											<div className="flex items-center space-x-3">
+												<img
+													src={product.image}
+													alt={product.name}
+													className="h-10 w-10 rounded-lg object-cover"
+												/>
+												<div>
+													<p className="font-medium text-gray-900 dark:text-white">
+														{product.name}
+													</p>
+													<p className="text-sm text-gray-500 dark:text-gray-400 md:hidden">
+														{product.sku}
+													</p>
+												</div>
+											</div>
 										</TableCell>
 
-										<TableCell>{product.sku}</TableCell>
+										<TableCell className="hidden md:table-cell">
+											{product.sku}
+										</TableCell>
 
 										<TableCell>{formatCurrency(product.price)}</TableCell>
 
@@ -201,7 +205,9 @@ const Products = () => {
 											</Badge>
 										</TableCell>
 
-										<TableCell>{product.category}</TableCell>
+										<TableCell className="hidden lg:table-cell">
+											{product.category}
+										</TableCell>
 
 										<TableCell>
 											<div className="flex items-center space-x-2">
