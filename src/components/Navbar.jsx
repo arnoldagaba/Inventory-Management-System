@@ -76,11 +76,21 @@ const NotificationDropdown = ({
 	onClose,
 	onNotificationClick,
 }) => {
+	const navigate = useNavigate();
+
 	if (notifications.length === 0) return null;
 
 	const handleNotificationClick = (notification) => {
 		onNotificationClick(notification);
 		onClose();
+	};
+
+	const handleViewAll = (e) => {
+		e.preventDefault();
+		console.log('Starting navigation to notifications page');
+		onClose();
+		navigate('/notifications');
+		console.log('Navigation completed');
 	};
 
 	return (
@@ -98,13 +108,12 @@ const NotificationDropdown = ({
 					<h3 className="text-sm font-semibold text-gray-900 dark:text-white">
 						Notifications
 					</h3>
-					<Link
-						to="/notifications"
-						onClick={onClose}
+					<button
+						onClick={handleViewAll}
 						className="text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
 					>
 						View all
-					</Link>
+					</button>
 				</div>
 			</div>
 
@@ -198,20 +207,18 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	};
 
 	return (
-		<nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50">
-			<div className="h-full px-4 flex items-center justify-between">
+		<nav className="fixed top-0 left-0 right-0 h-16 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
+			<div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between max-w-[100vw] mx-auto">
 				{/* Left section */}
 				<div className="flex items-center gap-4">
-					{isMobile && (
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-							className="lg:hidden"
-						>
-							<Bars3Icon className="h-6 w-6" />
-						</Button>
-					)}
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+						className="md:hidden"
+					>
+						<Bars3Icon className="h-6 w-6" />
+					</Button>
 
 					<Link to="/" className="flex items-center space-x-2">
 						<img

@@ -35,9 +35,10 @@ const MainLayout = () => {
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
           isMobile={isMobile}
+          isMinimized={isMinimized}
         />
 
-        <div className="flex pt-16">
+        <div className="flex pt-16 relative">
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
             setIsMobileMenuOpen={setIsMobileMenuOpen}
@@ -48,7 +49,8 @@ const MainLayout = () => {
 
           <main
             className={cn(
-              "flex-1 p-4 transition-all duration-300 custom-scrollbar",
+              "flex-1 transition-all duration-300 custom-scrollbar min-h-[calc(100vh-4rem)]",
+              "p-4 sm:p-6 lg:p-8",
               isMobile ? "w-full" : isMinimized ? "ml-20" : "ml-60"
             )}
           >

@@ -44,11 +44,11 @@ const AppRoutes = () => {
 			<Route element={<ProtectedRoute />}>
 				<Route element={<MainLayout />}>
 					<Route path="/dashboard" element={<Dashboard />} />
+					<Route path="/notifications" element={<Notifications />} />
 					<Route path="/orders" element={<Orders />} />
 					<Route path="/products" element={<Products />} />
 					<Route path="/stock" element={<Stock />} />
 					<Route path="/analytics" element={<Analytics />} />
-					<Route path="/notifications" element={<Notifications />} />
 					<Route path="/settings" element={<Settings />} />
 				</Route>
 			</Route>

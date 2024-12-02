@@ -98,6 +98,7 @@ NotificationItem.propTypes = {
 };
 
 const Notifications = () => {
+	console.log('Notifications component rendered');
 	const location = useLocation();
 	const selectedNotificationId = location.state?.selectedNotification;
 	const [selectedType, setSelectedType] = useState("all");

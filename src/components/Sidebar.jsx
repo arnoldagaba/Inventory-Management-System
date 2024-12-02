@@ -30,32 +30,34 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile, isMinimized,
 			initial={isMobile ? { x: -240 } : false}
 			animate={isMobile ? { x: isMobileMenuOpen ? 0 : -240 } : false}
 			className={cn(
-				"fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300",
+				"fixed left-0 top-16 bottom-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300",
+				"overflow-hidden",
 				isMobile ? "shadow-lg" : "",
-				isMinimized ? "w-20" : "w-60"
+				isMinimized ? "w-20" : "w-60",
+				!isMobile && !isMobileMenuOpen ? "hidden md:block" : ""
 			)}
 		>
-			<nav className="h-full flex flex-col">
+			<nav className="h-full flex flex-col relative">
 				{isMobile ? (
-					<div className="flex justify-end p-4">
+					<div className="flex justify-end p-4 sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10">
 						<Button
 							variant="ghost"
 							size="icon"
 							onClick={() => setIsMobileMenuOpen(false)}
-							className="lg:hidden"
+							className="md:hidden"
 							aria-label="Close menu"
 						>
 							<XMarkIcon className="h-6 w-6" />
 						</Button>
 					</div>
 				) : (
-					<div className="flex justify-end p-4">
+					<div className="flex justify-end p-4 sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10">
 						<Button
 							variant="ghost"
 							size="icon"
 							onClick={toggleMinimized}
-							className="hidden lg:flex"
-							 aria-label={isMinimized ? "Expand menu" : "Minimize menu"}
+							className="hidden md:flex"
+							aria-label={isMinimized ? "Expand menu" : "Minimize menu"}
 						>
 							{isMinimized ? (
 								<ChevronRightIcon className="h-6 w-6" />
