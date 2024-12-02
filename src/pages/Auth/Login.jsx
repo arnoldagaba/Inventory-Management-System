@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 const Login = () => {
 	const { login, loading } = useAuth();
 	const [showPassword, setShowPassword] = useState(false);
+	const [rememberMe, setRememberMe] = useState(false);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -42,9 +43,10 @@ const Login = () => {
 
 		if (validateForm()) {
 			try {
-				await login(formData.email, formData.password);
+				await login(formData.email, formData.password, rememberMe);
 				toast.success("Logged in successfully!");
 			} catch (error) {
+				console.error('Login error:', error);
 				toast.error("Invalid email or password");
 			}
 		}
@@ -122,7 +124,9 @@ const Login = () => {
 							id="remember-me"
 							name="remember-me"
 							type="checkbox"
-							className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+							checked={rememberMe}
+							onChange={(e) => setRememberMe(e.target.checked)}
+							className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
 						/>
 
 						<label

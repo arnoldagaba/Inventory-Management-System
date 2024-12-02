@@ -8,7 +8,10 @@ import {
   signOut,
   sendPasswordResetEmail,
   updateProfile as updateFirebaseProfile,
-  onAuthStateChanged
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 } from "firebase/auth";
 import { auth, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
@@ -67,13 +70,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, remember = false) => {
     setLoading(true);
     try {
+      // Set persistence based on remember me choice
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+      
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Logged in successfully!");
       navigate("/");
     } catch (error) {
+      console.error('Login error:', error);
       toast.error("Invalid email or password");
       throw error;
     } finally {

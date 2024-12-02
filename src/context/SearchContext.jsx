@@ -6,38 +6,94 @@ export const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
 	const [searchQuery, setSearchQuery] = useState("");
-	const [searchResults, setSearchResults] = useState([]);
+	const [searchResults, setSearchResults] = useState({
+		orders: [],
+		products: [],
+		customers: [],
+		all: []
+	});
 	const [isSearching, setIsSearching] = useState(false);
 
-	const handleSearch = useCallback(async (query) => {
+	const handleSearch = useCallback(async (query, type = 'all') => {
 		setSearchQuery(query);
 		if (!query.trim()) {
-			setSearchResults([]);
+			setSearchResults({
+				orders: [],
+				products: [],
+				customers: [],
+				all: []
+			});
 			return;
 		}
 
 		setIsSearching(true);
 		try {
-			// Replace mock search with actual API call
-			const results = await api.get(`/search?q=${query}`).then(res => res.data);
-			
-			// Fallback to mock results if API is not available
-			if (!results?.length) {
-				const mockResults = [
-					{ type: "order", id: "001", title: "Order #001" },
-					{ type: "product", id: "P001", title: "Product A" },
-					{ type: "customer", id: "C001", title: "John Doe" },
-				].filter((item) =>
+			// Mock search results - replace with actual API call
+			const mockData = {
+				orders: [
+					{ type: "order", id: "ORD001", title: "Order #001", status: "Pending", date: "2024-03-15" },
+					{ type: "order", id: "ORD002", title: "Order #002", status: "Completed", date: "2024-03-14" },
+				],
+				products: [
+					{ type: "product", id: "PRD001", title: "Product A", stock: 50, price: 29.99 },
+					{ type: "product", id: "PRD002", title: "Product B", stock: 30, price: 39.99 },
+				],
+				customers: [
+					{ type: "customer", id: "CUS001", title: "John Doe", email: "john@example.com" },
+					{ type: "customer", id: "CUS002", title: "Jane Smith", email: "jane@example.com" },
+				],
+			};
+
+			// Filter based on search query
+			const filteredResults = {
+				orders: mockData.orders.filter(item => 
+					item.title.toLowerCase().includes(query.toLowerCase()) ||
+					item.status.toLowerCase().includes(query.toLowerCase())
+				),
+				products: mockData.products.filter(item => 
 					item.title.toLowerCase().includes(query.toLowerCase())
-				);
-				setSearchResults(mockResults);
-				return;
+				),
+				customers: mockData.customers.filter(item => 
+					item.title.toLowerCase().includes(query.toLowerCase()) ||
+					item.email.toLowerCase().includes(query.toLowerCase())
+				),
+			};
+
+			// Combine all results for the 'all' type
+			const allResults = [
+				...filteredResults.orders,
+				...filteredResults.products,
+				...filteredResults.customers,
+			];
+
+			// Update results based on search type
+			if (type === 'all') {
+				setSearchResults({
+					...filteredResults,
+					all: allResults
+				});
+			} else {
+				setSearchResults(prev => ({
+					...prev,
+					[type]: filteredResults[type] || [],
+					all: allResults
+				}));
 			}
-			
-			setSearchResults(results);
+
+			// Uncomment and modify for actual API implementation
+			// const response = await api.get(`/search`, {
+			//   params: { q: query, type }
+			// });
+			// setSearchResults(response.data);
+
 		} catch (error) {
 			console.error('Search error:', error);
-			setSearchResults([]);
+			setSearchResults({
+				orders: [],
+				products: [],
+				customers: [],
+				all: []
+			});
 		} finally {
 			setIsSearching(false);
 		}
@@ -45,8 +101,17 @@ export const SearchProvider = ({ children }) => {
 
 	const clearSearch = useCallback(() => {
 		setSearchQuery("");
-		setSearchResults([]);
+		setSearchResults({
+			orders: [],
+			products: [],
+			customers: [],
+			all: []
+		});
 	}, []);
+
+	const getResultsByType = useCallback((type) => {
+		return searchResults[type] || [];
+	}, [searchResults]);
 
 	const value = {
 		searchQuery,
@@ -54,6 +119,7 @@ export const SearchProvider = ({ children }) => {
 		isSearching,
 		handleSearch,
 		clearSearch,
+		getResultsByType,
 	};
 
 	return (

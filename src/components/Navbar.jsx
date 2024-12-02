@@ -164,7 +164,7 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	const navigate = useNavigate();
 	const { currentUser, logout } = useAuth();
 	const { theme, toggleTheme } = useTheme();
-	const { searchQuery, searchResults, handleSearch, clearSearch } = useSearch();
+	const { searchQuery, handleSearch, getResultsByType, clearSearch } = useSearch();
 	const { unreadNotifications } = useNotifications();
 	
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -202,6 +202,16 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 			navigate('/settings');
 		}
 	};
+
+	// Search for specific type
+	const handleProductSearch = (query) => {
+		handleSearch(query, 'products');
+	};
+
+	// Get specific results
+	const productResults = getResultsByType('products');
+	const orderResults = getResultsByType('orders');
+	const allResults = getResultsByType('all');
 
 	return (
 		<nav className="fixed top-0 left-0 right-0 h-16 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
@@ -244,9 +254,9 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 						/>
 					</div>
 
-					{isSearchFocused && searchResults.length > 0 && (
+					{isSearchFocused && productResults.length > 0 && (
 						<SearchResults
-							results={searchResults}
+							results={productResults}
 							onSelect={handleSearchResultSelect}
 							onClose={() => setIsSearchFocused(false)}
 						/>
