@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 const ResetPassword = () => {
 	const { resetPassword, loading } = useAuth();
+	
 	const [email, setEmail] = useState("");
 	const [error, setError] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);

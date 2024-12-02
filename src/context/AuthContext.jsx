@@ -116,6 +116,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (data) => {
     setLoading(true);
+    
     try {
       const updates = { displayName: data.name };
       

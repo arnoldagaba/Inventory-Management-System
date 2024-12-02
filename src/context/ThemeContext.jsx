@@ -10,13 +10,16 @@ export const ThemeProvider = ({ children }) => {
 			const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 			return savedTheme || (prefersDark ? "dark" : "light");
 		}
+
 		return "light";
 	});
 
 	useEffect(() => {
 		const root = window.document.documentElement;
+
 		root.classList.remove("light", "dark");
 		root.classList.add(theme);
+		
 		localStorage.setItem("theme", theme);
 	}, [theme]);
 

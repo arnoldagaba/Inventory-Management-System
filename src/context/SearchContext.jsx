@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import PropTypes from "prop-types";
+import { api } from "../constants/api";
 
 const SearchContext = createContext();
 

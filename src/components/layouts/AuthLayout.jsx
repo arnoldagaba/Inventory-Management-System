@@ -1,13 +1,31 @@
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
+import { OriginButton } from "../ui/origin";
+import { useTheme } from "../../hooks/useTheme";
+import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 const AuthLayout = ({ children }) => {
 	const location = useLocation();
 	const isLoginPage = location.pathname === "/login";
+	const { theme, toggleTheme } = useTheme();
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+			<OriginButton
+				variant="ghost"
+				size="icon"
+				onClick={toggleTheme}
+				className="fixed top-4 right-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+				aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+			>
+				{theme === "dark" ? (
+					<SunIcon className="h-7 w-7 text-gray-600 dark:text-gray-400" />
+				) : (
+					<MoonIcon className="h-7 w-7 text-gray-600 dark:text-gray-400" />
+				)}
+			</OriginButton>
+
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}

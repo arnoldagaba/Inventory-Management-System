@@ -153,6 +153,7 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	const { currentUser, logout } = useAuth();
 	const { theme, toggleTheme } = useTheme();
 	const { searchQuery, searchResults, handleSearch, clearSearch } = useSearch();
+	
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showNotifications, setShowNotifications] = useState(false);

@@ -1,70 +1,57 @@
-import { Link, Navigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { OriginButton } from "../../components/ui/origin";
+import { ThemeToggle } from "../../components/ThemeToggle";
 import {
   ChartBarIcon,
   CubeIcon,
-  ShoppingBagIcon,
   ShieldCheckIcon,
   ArrowRightIcon,
-  Square3Stack3DIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 
 const features = [
   {
     icon: ChartBarIcon,
-    title: 'Real-time Analytics',
-    description: 'Get instant insights into your business performance with detailed analytics and reports.'
+    title: "Real-time Analytics",
+    description: "Get instant insights into your inventory performance with detailed analytics and reporting.",
   },
   {
     icon: CubeIcon,
-    title: 'Inventory Management',
-    description: 'Track stock levels, set reorder points, and manage your inventory efficiently.'
-  },
-  {
-    icon: ShoppingBagIcon,
-    title: 'Order Processing',
-    description: 'Streamline your order fulfillment process from receipt to delivery.'
+    title: "Stock Management",
+    description: "Efficiently manage your inventory with automated stock tracking and reorder notifications.",
   },
   {
     icon: ShieldCheckIcon,
-    title: 'Secure & Reliable',
-    description: 'Your data is protected with enterprise-grade security and regular backups.'
-  }
+    title: "Secure & Reliable",
+    description: "Enterprise-grade security to protect your business data with regular backups.",
+  },
 ];
 
 const Landing = () => {
-  const { currentUser } = useAuth();
-
-  // Redirect to dashboard if user is already logged in
-  if (currentUser) {
-    return <Navigate to="/" replace />;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+      <nav className="fixed w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex-shrink-0 flex items-center space-x-2">
-              <Square3Stack3DIcon className="h-8 w-8 text-blue-600 dark:text-blue-500" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="flex items-center">
+              <img
+                src="/src/assets/InvenEase.webp"
+                alt="Logo"
+                className="h-8 w-8 rounded-xl"
+              />
+              <span className="ml-2 text-xl font-semibold text-gray-900 dark:text-white">
                 InvenEase
-              </h1>
+              </span>
             </div>
+            
             <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Login
+              <ThemeToggle className="hover:bg-gray-100 dark:hover:bg-gray-700" />
+              <Link to="/login">
+                <OriginButton variant="outline">Sign in</OriginButton>
               </Link>
-              <Link
-                to="/signup"
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Sign Up
+              <Link to="/signup">
+                <OriginButton>Get Started</OriginButton>
               </Link>
             </div>
           </div>
@@ -79,59 +66,56 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">
-              Streamline Your Inventory Management
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white">
+              Simplify Your{" "}
+              <span className="text-origin-600 dark:text-origin-500">
+                Inventory Management
+              </span>
             </h1>
-            <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              A powerful, intuitive inventory management system designed to help you track, manage, and optimize your stock levels with ease.
+            <p className="mt-6 text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Streamline your business operations with our powerful inventory management system. 
+              Track stock, manage orders, and grow your business with ease.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-4">
-              <Link
-                to="/signup"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
-              >
-                Get Started
-                <ArrowRightIcon className="ml-2 h-5 w-5" />
+            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+              <Link to="/signup">
+                <OriginButton 
+                  size="lg" 
+                  className="w-full sm:w-auto bg-origin-600 hover:bg-origin-700 dark:bg-origin-500 dark:hover:bg-origin-600 text-white shadow-lg hover:shadow-origin-500/25 dark:shadow-origin-400/25 transition-all duration-200"
+                >
+                  Start Free Trial
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
+                </OriginButton>
               </Link>
-              <Link
-                to="/login"
-                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
+              <OriginButton
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto border-origin-200 dark:border-origin-400/20 hover:bg-origin-50 dark:hover:bg-origin-400/10 text-origin-600 dark:text-origin-400"
+                onClick={() => window.open('https://calendly.com', '_blank')}
               >
-                Login to Dashboard
-              </Link>
+                Book a Demo
+              </OriginButton>
             </div>
           </motion.div>
-        </div>
-      </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-800/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Everything you need to manage your inventory
-            </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              Powerful features to help you take control of your business
-            </p>
-          </div>
-
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Features Grid */}
+          <div className="mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                transition={{ delay: index * 0.2 }}
+                className="relative p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
               >
-                <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="absolute -top-6 left-6">
+                  <div className="p-3 bg-origin-600 rounded-lg shadow-lg">
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
                   {feature.description}
                 </p>
               </motion.div>
@@ -140,13 +124,31 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="py-20 bg-origin-600 dark:bg-origin-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">
+            Ready to transform your business?
+          </h2>
+          <p className="mt-4 text-lg text-origin-100">
+            Join thousands of businesses that trust InvenEase
+          </p>
+          <Link to="/signup" className="mt-8 inline-block">
+            <OriginButton
+              size="lg"
+              className="bg-white hover:bg-gray-50 dark:bg-origin-500 dark:hover:bg-origin-600 text-origin-600 dark:text-white shadow-lg hover:shadow-white/25 dark:hover:shadow-origin-400/25 transition-all duration-200"
+            >
+              Get Started Now
+            </OriginButton>
+          </Link>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+      <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400">
-              © 2024 InvenEase. All rights reserved.
-            </p>
+          <div className="text-center text-gray-600 dark:text-gray-400">
+            <p>© 2024 InvenEase. All rights reserved.</p>
           </div>
         </div>
       </footer>
