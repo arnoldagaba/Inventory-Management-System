@@ -25,10 +25,16 @@ import { useNotifications } from "../context/NotificationsContext";
 const SearchResults = ({ results, onSelect, onClose }) => {
 	if (results.length === 0) return null;
 
+	const handleSelect = (result) => {
+		onSelect(result);
+		onClose();
+	};
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: -10 }}
 			animate={{ opacity: 1, y: 0 }}
+			
 			className={cn(
 				"absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg",
 				"shadow-lg border border-gray-200 dark:border-gray-700 max-h-64 overflow-y-auto",
@@ -39,10 +45,7 @@ const SearchResults = ({ results, onSelect, onClose }) => {
 				<button
 					key={`${result.type}-${result.id}`}
 					className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
-					onClick={() => {
-						onSelect(result);
-						onClose();
-					}}
+					onClick={() => handleSelect(result)}
 				>
 					<p className="text-sm font-medium text-gray-900 dark:text-white">
 						{result.title}
@@ -75,6 +78,11 @@ const NotificationDropdown = ({
 }) => {
 	if (notifications.length === 0) return null;
 
+	const handleNotificationClick = (notification) => {
+		onNotificationClick(notification);
+		onClose();
+	};
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: -10 }}
@@ -92,6 +100,7 @@ const NotificationDropdown = ({
 					</h3>
 					<Link
 						to="/notifications"
+						onClick={onClose}
 						className="text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
 					>
 						View all
@@ -103,10 +112,7 @@ const NotificationDropdown = ({
 				{notifications.map((notification) => (
 					<button
 						key={notification.id}
-						onClick={() => {
-							onNotificationClick(notification);
-							onClose();
-						}}
+						onClick={() => handleNotificationClick(notification)}
 						className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
 					>
 						<div className="flex items-start space-x-3">
@@ -163,22 +169,32 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	const notificationsRef = useClickOutside(() => setShowNotifications(false));
 	const userMenuRef = useClickOutside(() => setShowUserMenu(false));
 
-	const handleNotificationClick = (notification) => {
-		navigate("/notifications", {
-			state: { selectedNotification: notification.id },
-		});
-	};
-
 	const handleSearchChange = (e) => {
 		handleSearch(e.target.value);
 	};
 
 	const handleSearchResultSelect = (result) => {
 		clearSearch();
+		setIsSearchFocused(false);
 
-		//TODO: Fix navigation handling based on result type
 		// Handle navigation based on result type
 		console.log("Selected:", result);
+	};
+
+	const handleNotificationClick = (notification) => {
+		setShowNotifications(false);
+		navigate("/notifications", {
+			state: { selectedNotification: notification.id },
+		});
+	};
+
+	const handleUserMenuItemClick = (action) => {
+		setShowUserMenu(false);
+		if (action === 'logout') {
+			logout();
+		} else if (action === 'settings') {
+			navigate('/settings');
+		}
 	};
 
 	return (
@@ -310,15 +326,15 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 								</div>
 
 								<div className="p-2">
-									<Link
-										to="/settings"
-										className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+									<button
+										onClick={() => handleUserMenuItemClick('settings')}
+										className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
 									>
 										Settings
-									</Link>
+									</button>
 
 									<button
-										onClick={logout}
+										onClick={() => handleUserMenuItemClick('logout')}
 										className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
 									>
 										Sign out

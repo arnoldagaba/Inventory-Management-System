@@ -30,8 +30,8 @@ const AppRoutes = () => {
 
 	return (
 		<Routes>
-			{/* Landing Page */}
-			<Route path="/landing" element={<Landing />} />
+			{/* Landing Page - Public */}
+			<Route path="/" element={!currentUser ? <Landing /> : <Navigate to="/dashboard" replace />} />
 
 			{/* Public Routes */}
 			<Route element={<PublicRoute />}>
@@ -43,7 +43,7 @@ const AppRoutes = () => {
 			{/* Protected Routes */}
 			<Route element={<ProtectedRoute />}>
 				<Route element={<MainLayout />}>
-					<Route path="/" element={<Dashboard />} />
+					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/orders" element={<Orders />} />
 					<Route path="/products" element={<Products />} />
 					<Route path="/stock" element={<Stock />} />
@@ -52,17 +52,6 @@ const AppRoutes = () => {
 					<Route path="/settings" element={<Settings />} />
 				</Route>
 			</Route>
-
-			{/* Redirect root to landing for non-authenticated users */}
-			<Route
-				path="/"
-				element={
-					<Navigate
-						to={currentUser ? "/dashboard" : "/landing"}
-						replace
-					/>
-				}
-			/>
 
 			{/* 404 Route */}
 			<Route path="*" element={<NotFound />} />
