@@ -14,6 +14,7 @@ import {
 import { Button, SidebarTooltip } from "./ui";
 import PropTypes from "prop-types";
 import { cn } from "../utils/cn";
+import { useTheme } from '../hooks';
 
 const navItems = [
 	{ name: "Dashboard", path: "/", icon: HomeIcon },

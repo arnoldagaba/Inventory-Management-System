@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "../../components/ui";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from '../../hooks';
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { toast } from "react-toastify";
 

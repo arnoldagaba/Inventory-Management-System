@@ -1,5 +1,5 @@
 import { Button } from "./ui";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from '../hooks';
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 export const ThemeToggle = ({ className }) => {

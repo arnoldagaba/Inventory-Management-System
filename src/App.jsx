@@ -4,7 +4,8 @@ import {
 	Route,
 	Navigate,
 } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./hooks/useAuth";
 import { ThemeProvider } from "./context/ThemeContext";
 import { SearchProvider } from "./context/SearchContext";
 import { ToastContainer } from "react-toastify";

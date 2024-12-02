@@ -10,8 +10,7 @@ import {
 	CameraIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Container, Input, Button, Badge } from "../../components/ui";
-import { useTheme } from "../../hooks/useTheme";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, useTheme } from '../../hooks';
 import { toast } from "react-toastify";
 import { storage } from "../../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";

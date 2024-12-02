@@ -5,6 +5,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import { SearchProvider } from "../../context/SearchContext";
 import { cn } from "../../utils/cn";
+import { useTheme } from '../../hooks';
 
 const MainLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

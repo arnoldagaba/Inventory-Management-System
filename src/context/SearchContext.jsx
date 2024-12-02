@@ -1,16 +1,8 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { api } from "../constants/api";
 
-const SearchContext = createContext();
-
-export const useSearch = () => {
-	const context = useContext(SearchContext);
-	if (!context) {
-		throw new Error("useSearch must be used within a SearchProvider");
-	}
-	return context;
-};
+export const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
 	const [searchQuery, setSearchQuery] = useState("");

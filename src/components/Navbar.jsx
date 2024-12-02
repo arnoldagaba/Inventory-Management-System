@@ -12,15 +12,12 @@ import {
 	MoonIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "./ui";
-import { useAuth } from "../context/AuthContext";
-import { useSearch } from "../context/SearchContext";
-import { useTheme } from "../hooks/useTheme";
+import { useAuth, useSearch, useTheme, useNotifications } from '../hooks';
 import PropTypes from "prop-types";
 import { cn } from "../utils/cn";
 import { unreadNotifications } from "../constants/constants";
 import { getRelativeTime } from "../utils/formatDate";
 import { useClickOutside } from "../hooks/useClickOutside";
-import { useNotifications } from "../context/NotificationsContext";
 
 const SearchResults = ({ results, onSelect, onClose }) => {
 	if (results.length === 0) return null;
@@ -168,11 +165,11 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen, isMobile }) => {
 	const { currentUser, logout } = useAuth();
 	const { theme, toggleTheme } = useTheme();
 	const { searchQuery, searchResults, handleSearch, clearSearch } = useSearch();
+	const { unreadNotifications } = useNotifications();
 	
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showNotifications, setShowNotifications] = useState(false);
-	const { unreadNotifications } = useNotifications();
 
 	// Click outside handlers
 	const notificationsRef = useClickOutside(() => setShowNotifications(false));

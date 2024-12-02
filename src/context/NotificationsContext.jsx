@@ -1,16 +1,8 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 import PropTypes from "prop-types";
 import { notifications as initialNotifications } from "../constants/constants";
 
-const NotificationsContext = createContext();
-
-export const useNotifications = () => {
-  const context = useContext(NotificationsContext);
-  if (!context) {
-    throw new Error("useNotifications must be used within a NotificationsProvider");
-  }
-  return context;
-};
+export const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
   const [notifications, setNotifications] = useState(initialNotifications);

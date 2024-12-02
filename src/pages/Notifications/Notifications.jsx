@@ -10,7 +10,7 @@ import { Card, Container, Button, Badge } from "../../components/ui";
 import { getRelativeTime } from "../../utils/formatDate";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useNotifications } from "../../context/NotificationsContext";
+import { useNotifications } from '../../hooks';
 import { notificationPriorityColors } from "../../constants/constants";
 import { cn } from "../../utils/cn";
 
