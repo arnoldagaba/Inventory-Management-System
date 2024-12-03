@@ -6,7 +6,7 @@ import {
 	XMarkIcon,
 	FunnelIcon,
 } from "@heroicons/react/24/outline";
-import { Card, Container, Button, Badge } from "../../components/ui";
+import { Card, Container, Button, Badge, Loading } from "../../components/ui";
 import { getRelativeTime } from "../../utils/formatDate";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -98,7 +98,6 @@ NotificationItem.propTypes = {
 };
 
 const Notifications = () => {
-	console.log('Notifications component rendered');
 	const location = useLocation();
 	const selectedNotificationId = location.state?.selectedNotification;
 	const [selectedType, setSelectedType] = useState("all");
@@ -108,10 +107,16 @@ const Notifications = () => {
 		markAllAsRead,
 		deleteNotification: handleDelete,
 		clearAll: handleClearAll,
+		isLoading
 	} = useNotifications();
 
 	useEffect(() => {
-		if (selectedNotificationId) {
+		console.log('Notifications mounted', { items, isLoading });
+		return () => console.log('Notifications unmounted');
+	}, [items, isLoading]);
+
+	useEffect(() => {
+		if (selectedNotificationId && items.length > 0) {
 			const element = document.getElementById(`notification-${selectedNotificationId}`);
 			if (element) {
 				element.scrollIntoView({ behavior: "smooth" });
@@ -122,13 +127,36 @@ const Notifications = () => {
 				markAsRead(selectedNotificationId);
 			}
 		}
-	}, [selectedNotificationId, markAsRead]);
+	}, [selectedNotificationId, items, markAsRead]);
 
 	const filteredItems = items.filter(
 		(item) => selectedType === "all" || item.type === selectedType
 	);
 
 	const unreadCount = items.filter((item) => !item.read).length;
+
+	if (isLoading) {
+		return (
+			<Container>
+				<div className="flex justify-center items-center h-64">
+					<Loading size="lg" />
+				</div>
+			</Container>
+		);
+	}
+
+	if (!items || items.length === 0) {
+		return (
+			<Container>
+				<Card>
+					<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+						<BellIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+						<p>No notifications found.</p>
+					</div>
+				</Card>
+			</Container>
+		);
+	}
 
 	return (
 		<Container>
