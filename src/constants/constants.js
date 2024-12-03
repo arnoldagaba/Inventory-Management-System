@@ -631,30 +631,38 @@ export const tableHeaders = {
 /******** Activity Feed *********/
 export const activity = [
 	{
-		type: "New Order",
-		content: "John Doe placed an order for UGX 250,000",
-		timestamp: "2024-03-08T10:30:00Z",
+		type: "Order",
+		content: "New order #1234 received",
+		timestamp: "2024-03-15T10:30:00Z",
+		status: "pending",
+		user: "System",
+		details: {
+			orderId: "1234",
+			amount: 1107000,  // UGX 1,107,000 (≈ $299)
+			items: 3,
+			customer: "John Doe"
+		},
+		relatedItems: [
+			{ name: "Order #1234", type: "order" },
+			{ name: "John Doe", type: "customer" }
+		]
 	},
 	{
-		type: "Stock Alert",
-		content: "Product 'Laptop X1' is running low on stock",
-		timestamp: "2024-03-08T09:15:00Z",
+		type: "Stock",
+		content: "Low stock alert for Product A",
+		timestamp: "2024-03-15T09:15:00Z",
+		status: "warning",
+		user: "System",
+		details: {
+			productId: "P123",
+			currentStock: 5,
+			reorderPoint: 10
+		},
+		relatedItems: [
+			{ name: "Product A", type: "product" }
+		]
 	},
-	{
-		type: "Payment Received",
-		content: "Payment received for Order #12345",
-		timestamp: "2024-03-08T08:45:00Z",
-	},
-	{
-		type: "New Customer",
-		content: "Jane Smith created an account",
-		timestamp: "2024-03-08T07:20:00Z",
-	},
-	{
-		type: "Shipment Update",
-		content: "Order #12344 has been delivered",
-		timestamp: "2024-03-08T06:10:00Z",
-	},
+	// ... add more activity items with detailed information
 ];
 
 export const reportStatusColors = {

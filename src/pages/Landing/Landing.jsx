@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { OriginButton } from "../../components/ui/origin";
+import { Button } from "../../components/ui";
 import { ThemeToggle } from "../../components/ThemeToggle";
 import {
   ChartBarIcon,
@@ -48,10 +48,10 @@ const Landing = () => {
             <div className="flex items-center space-x-4">
               <ThemeToggle className="hover:bg-gray-100 dark:hover:bg-gray-700" />
               <Link to="/login">
-                <OriginButton variant="outline">Sign in</OriginButton>
+                <Button variant="outline">Sign in</Button>
               </Link>
               <Link to="/signup">
-                <OriginButton>Get Started</OriginButton>
+                <Button>Get Started</Button>
               </Link>
             </div>
           </div>
@@ -78,22 +78,22 @@ const Landing = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/signup">
-                <OriginButton 
+                <Button 
                   size="lg" 
                   className="w-full sm:w-auto bg-origin-600 hover:bg-origin-700 dark:bg-origin-500 dark:hover:bg-origin-600 text-white shadow-lg hover:shadow-origin-500/25 dark:shadow-origin-400/25 transition-all duration-200"
                 >
                   Start Free Trial
                   <ArrowRightIcon className="ml-2 h-5 w-5" />
-                </OriginButton>
+                </Button>
               </Link>
-              <OriginButton
+              <Button
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto border-origin-200 dark:border-origin-400/20 hover:bg-origin-50 dark:hover:bg-origin-400/10 text-origin-600 dark:text-origin-400"
                 onClick={() => window.open('https://calendly.com', '_blank')}
               >
                 Book a Demo
-              </OriginButton>
+              </Button>
             </div>
           </motion.div>
 
@@ -134,12 +134,12 @@ const Landing = () => {
             Join thousands of businesses that trust InvenEase
           </p>
           <Link to="/signup" className="mt-8 inline-block">
-            <OriginButton
+            <Button
               size="lg"
               className="bg-white hover:bg-gray-50 dark:bg-origin-500 dark:hover:bg-origin-600 text-origin-600 dark:text-white shadow-lg hover:shadow-white/25 dark:hover:shadow-origin-400/25 transition-all duration-200"
             >
               Get Started Now
-            </OriginButton>
+            </Button>
           </Link>
         </div>
       </section>

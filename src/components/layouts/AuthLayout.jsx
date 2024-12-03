@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
-import { OriginButton } from "../ui/origin";
+import { Button } from "../ui";
 import { useTheme } from "../../hooks/useTheme";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
@@ -12,7 +12,7 @@ const AuthLayout = ({ children }) => {
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-			<OriginButton
+			<Button
 				variant="ghost"
 				size="icon"
 				onClick={toggleTheme}
@@ -24,7 +24,7 @@ const AuthLayout = ({ children }) => {
 				) : (
 					<MoonIcon className="h-7 w-7 text-gray-600 dark:text-gray-400" />
 				)}
-			</OriginButton>
+			</Button>
 
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}

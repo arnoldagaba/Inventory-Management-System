@@ -1,3 +1,4 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
@@ -17,6 +18,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { formatNumberWithComma } from "../../utils/formatNumber";
 import { dashboardStats, dashboardChartData, activity } from "../../constants/constants";
 import { formatAxisLabel } from "../../utils/formatNumber";
+import { ActivityDetails } from '../../components/ActivityDetails';
 
 const StatCard = ({ title, value, icon: Icon, trend, color }) => (
 	<Card className="relative overflow-hidden">
@@ -82,6 +84,8 @@ const ChartCard = ({ title, children }) => (
 
 const Dashboard = () => {
 	const { theme } = useTheme();
+	const [selectedActivity, setSelectedActivity] = useState(null);
+	const [isActivityDetailsOpen, setIsActivityDetailsOpen] = useState(false);
 
 	const darkModeChartColors = {
 		grid: "#2D3748",        // Darker grid lines
@@ -100,6 +104,11 @@ const Dashboard = () => {
 	};
 
 	const chartColors = theme === "dark" ? darkModeChartColors : lightModeChartColors;
+
+	const handleActivityClick = (activity) => {
+		setSelectedActivity(activity);
+		setIsActivityDetailsOpen(true);
+	};
 
 	return (
 		<Container>
@@ -226,35 +235,44 @@ const Dashboard = () => {
 				</div>
 
 				{/* Recent Activity */}
-				<Card>
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-						Recent Activity
-					</h3>
+				<div className="mt-8">
+					<Card>
+						<h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+							Recent Activity
+						</h2>
+						<div className="space-y-4">
+							{activity.map((item, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: index * 0.1 }}
+									className="flex items-start space-x-3 py-3 border-b last:border-0 border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 px-3 rounded-lg transition-colors"
+									onClick={() => handleActivityClick(item)}
+								>
+									<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500 dark:bg-blue-400" />
+									<div>
+										<span className="font-medium text-gray-900 dark:text-gray-100">
+											{item.type}
+										</span>
+										<p className="text-sm text-gray-500 dark:text-gray-300">
+											{item.content}
+										</p>
+									</div>
+								</motion.div>
+							))}
+						</div>
+					</Card>
+				</div>
 
-					<div className="space-y-4">
-						{activity.map((item, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, x: -20 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ delay: index * 0.1 }}
-								className="flex items-start space-x-3 py-3 border-b last:border-0 border-gray-200 dark:border-gray-700"
-								whileHover={{ x: 4 }}
-							>
-								<span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-500 dark:bg-blue-400" />
-
-								<div>
-									<span className="font-medium text-gray-900 dark:text-gray-100">
-										{item.type}
-									</span>
-									<p className="text-sm text-gray-500 dark:text-gray-300">
-										{item.content}
-									</p>
-								</div>
-							</motion.div>
-						))}
-					</div>
-				</Card>
+				<ActivityDetails
+					activity={selectedActivity}
+					isOpen={isActivityDetailsOpen}
+					onClose={() => {
+						setIsActivityDetailsOpen(false);
+						setSelectedActivity(null);
+					}}
+				/>
 			</div>
 		</Container>
 	);
