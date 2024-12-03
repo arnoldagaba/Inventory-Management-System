@@ -8,9 +8,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { Card, Container, Button, Input, Badge } from "../../components/ui";
 import { formatDate } from "../../utils/formatDate";
-import { formatNumberWithComma } from "../../utils/formatNumber";
 import { reports } from "../../constants/constants";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
+import { ReportBuilder } from "../../components/ReportBuilder";
+import { generateReport } from "../../services/reportService";
 
 const statusColors = {
 	Ready: "success",
@@ -24,39 +25,25 @@ const Reports = () => {
 		start: "",
 		end: "",
 	});
+	const [isBuilderOpen, setIsBuilderOpen] = useState(false);
 
-	const handleDownload = (report) => {
-		// Implement download functionality
-		if (report.status !== "Ready") {
-			toast.error("Report is not ready for download");
-			return;
-		}
-
-		// In a real application, this would trigger a file download
-		// For now, simulate download with a success message
-		toast.success(`Downloading ${report.name}...`);
-		// You would typically make an API call here to get the report file
-		// api.get(`/reports/${report.id}/download`)
-	};
-
-	const handleGenerateReport = () => {
-		// Implement report generation
-		toast.info("Generating new report...");
-		// In a real application, this would trigger report generation
-		// api.post('/reports/generate', { type: selectedType, dateRange })
-		
-		// Simulate report generation
-		setTimeout(() => {
+	const handleGenerateReport = async (config) => {
+		try {
+			await generateReport(config);
+			setIsBuilderOpen(false);
 			toast.success("Report generated successfully!");
-		}, 2000);
+		} catch (error) {
+			console.error('Report generation error:', error);
+			toast.error("Failed to generate report");
+		}
 	};
 
 	const filteredReports = reports.filter(
 		(report) =>
 			(selectedType === "all" || report.type === selectedType) &&
-			(!dateRange.start ||
-				new Date(report.date) >= new Date(dateRange.start)) &&
-			(!dateRange.end || new Date(report.date) <= new Date(dateRange.end))
+				(!dateRange.start ||
+					new Date(report.date) >= new Date(dateRange.start)) &&
+				(!dateRange.end || new Date(report.date) <= new Date(dateRange.end))
 	);
 
 	return (
@@ -98,7 +85,7 @@ const Reports = () => {
 						</div>
 					</div>
 
-					<Button onClick={handleGenerateReport}>
+					<Button onClick={() => setIsBuilderOpen(true)}>
 						<DocumentTextIcon className="h-5 w-5 mr-2" />
 						Generate Report
 					</Button>
@@ -158,6 +145,13 @@ const Reports = () => {
 					</div>
 				</Card>
 			</div>
+
+			{isBuilderOpen && (
+				<ReportBuilder
+					onClose={() => setIsBuilderOpen(false)}
+					onGenerateReport={handleGenerateReport}
+				/>
+			)}
 		</Container>
 	);
 };

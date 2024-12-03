@@ -25,6 +25,7 @@ import Notifications from "./pages/Notifications/Notifications";
 import { NotificationsProvider } from "./context/NotificationsContext";
 import Stock from "./pages/Stock/Stock";
 import Landing from "./pages/Landing/Landing";
+import Reports from "./pages/Reports/Reports";
 
 const AppRoutes = () => {
 	const { currentUser } = useAuth();
@@ -49,6 +50,7 @@ const AppRoutes = () => {
 					<Route path="/orders" element={<Orders />} />
 					<Route path="/products" element={<Products />} />
 					<Route path="/stock" element={<Stock />} />
+					<Route path="/reports" element={<Reports />} />
 					<Route path="/analytics" element={<Analytics />} />
 					<Route path="/settings" element={<Settings />} />
 				</Route>

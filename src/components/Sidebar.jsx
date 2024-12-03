@@ -10,6 +10,8 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	Square3Stack3DIcon,
+	ChartBarIcon,
+	DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button, SidebarTooltip } from "./ui";
 import PropTypes from "prop-types";
@@ -21,6 +23,7 @@ const navItems = [
 	{ name: "Orders", path: "/orders", icon: ShoppingBagIcon },
 	{ name: "Products", path: "/products", icon: CubeIcon },
 	{ name: "Stock", path: "/stock", icon: Square3Stack3DIcon },
+	{ name: "Reports", path: "/reports", icon: DocumentTextIcon },
 	{ name: "Analytics", path: "/analytics", icon: ChartPieIcon },
 	{ name: "Settings", path: "/settings", icon: Cog6ToothIcon },
 ];
