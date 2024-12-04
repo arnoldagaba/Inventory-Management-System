@@ -10,7 +10,7 @@ import {
 	CameraIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Container, Input, Button, Badge } from "../../components/ui";
-import { useAuth, useTheme } from '../../hooks';
+import { useAuth, useTheme } from "../../hooks";
 import { toast } from "react-toastify";
 import { storage } from "../../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -18,7 +18,7 @@ import { cn } from "../../utils/cn";
 
 const SettingsSection = ({ title, children }) => (
 	<Card>
-		<h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+		<h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
 			{title}
 		</h2>
 		{children}
@@ -52,27 +52,27 @@ const Settings = () => {
 		if (!file) return;
 
 		// Validate file type
-		if (!file.type.startsWith('image/')) {
-			toast.error('Please upload an image file');
+		if (!file.type.startsWith("image/")) {
+			toast.error("Please upload an image file");
 			return;
 		}
 
 		// Validate file size (max 5MB)
 		if (file.size > 5 * 1024 * 1024) {
-			toast.error('Image must be less than 5MB');
+			toast.error("Image must be less than 5MB");
 			return;
 		}
 
 		try {
 			setIsUploading(true);
-			await updateProfile({ 
-				...profileData, 
-				photo: file 
+			await updateProfile({
+				...profileData,
+				photo: file,
 			});
-			toast.success('Profile picture updated successfully!');
+			toast.success("Profile picture updated successfully!");
 		} catch (error) {
 			console.error(error);
-			toast.error('Failed to upload image');
+			toast.error("Failed to upload image");
 		} finally {
 			setIsUploading(false);
 		}
@@ -82,7 +82,6 @@ const Settings = () => {
 		e.preventDefault();
 		setIsLoading(true);
 		try {
-			
 			await updateProfile(profileData);
 			toast.success("Profile updated successfully!");
 		} catch (_error) {
@@ -112,38 +111,43 @@ const Settings = () => {
 					animate={{ opacity: 1, y: 0 }}
 				>
 					<SettingsSection title="Profile Settings">
-						<div className="mb-6 flex justify-center">
+						<div className="flex justify-center mb-6">
 							<div className="relative">
 								<button
 									onClick={handleImageClick}
 									className="relative group"
 									disabled={isUploading}
 								>
-									<div className={cn(
-										"h-24 w-24 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700",
-										"group-hover:border-blue-500 transition-colors"
-									)}>
+									<div
+										className={cn(
+											"h-24 w-24 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700",
+											"group-hover:border-blue-500 transition-colors"
+										)}
+									>
 										{profileData.photoURL ? (
 											<img
 												src={profileData.photoURL}
 												alt="Profile"
-												className="h-full w-full object-cover"
+												className="object-cover w-full h-full"
 											/>
 										) : (
-											<div className="h-full w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-												<UserIcon className="h-12 w-12 text-gray-400" />
+											<div className="flex items-center justify-center w-full h-full bg-gray-100 dark:bg-gray-800">
+												<UserIcon className="w-12 h-12 text-gray-400" />
 											</div>
 										)}
 									</div>
-									<div className={cn(
-										"absolute inset-0 flex items-center justify-center rounded-full",
-										"bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
-									)}>
-										<CameraIcon className="h-8 w-8 text-white" />
+
+									<div
+										className={cn(
+											"absolute inset-0 flex items-center justify-center rounded-full",
+											"bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+										)}
+									>
+										<CameraIcon className="w-8 h-8 text-white" />
 									</div>
 									{isUploading && (
 										<div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50">
-											<div className="h-8 w-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+											<div className="w-8 h-8 border-4 border-white rounded-full border-t-transparent animate-spin" />
 										</div>
 									)}
 								</button>
@@ -213,7 +217,7 @@ const Settings = () => {
 									className="flex items-center justify-between"
 								>
 									<div className="flex items-center space-x-3">
-										<BellIcon className="h-5 w-5 text-gray-400" />
+										<BellIcon className="w-5 h-5 text-gray-400" />
 
 										<span className="text-gray-700 dark:text-gray-300">
 											{setting.label}
@@ -245,7 +249,7 @@ const Settings = () => {
 									className="flex items-center justify-between"
 								>
 									<div className="flex items-center space-x-3">
-										<ShieldCheckIcon className="h-5 w-5 text-gray-400" />
+										<ShieldCheckIcon className="w-5 h-5 text-gray-400" />
 
 										<span className="text-gray-700 dark:text-gray-300">
 											{setting.label}
@@ -278,7 +282,7 @@ const Settings = () => {
 					<SettingsSection title="Appearance">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center space-x-3">
-								<PaintBrushIcon className="h-5 w-5 text-gray-400" />
+								<PaintBrushIcon className="w-5 h-5 text-gray-400" />
 
 								<span className="text-gray-700 dark:text-gray-300">
 									Dark Mode
