@@ -12,23 +12,8 @@ import {
 	setPersistence,
 	browserLocalPersistence,
 	browserSessionPersistence,
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	signOut,
-	sendPasswordResetEmail,
-	updateProfile as updateFirebaseProfile,
-	onAuthStateChanged,
-	setPersistence,
-	browserLocalPersistence,
-	browserSessionPersistence,
 } from "firebase/auth";
 import { auth, storage } from "../config/firebase";
-import {
-	ref,
-	uploadBytes,
-	getDownloadURL,
-	deleteObject,
-} from "firebase/storage";
 import {
 	ref,
 	uploadBytes,
@@ -38,7 +23,7 @@ import {
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
@@ -50,16 +35,7 @@ export const AuthProvider = ({ children }) => {
 			setCurrentUser(user);
 			setLoading(false);
 		});
-	useEffect(() => {
-		console.log("Setting up auth state listener...");
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			console.log("Auth state changed:", user);
-			setCurrentUser(user);
-			setLoading(false);
-		});
 
-		return unsubscribe;
-	}, []);
 		return unsubscribe;
 	}, []);
 
@@ -136,30 +112,7 @@ export const AuthProvider = ({ children }) => {
 			throw error;
 		}
 	};
-	const logout = async () => {
-		try {
-			await signOut(auth);
-			toast.success("Logged out successfully!");
-			navigate("/login");
-		} catch (error) {
-			toast.error("Failed to logout");
-			throw error;
-		}
-	};
 
-	const resetPassword = async (email) => {
-		setLoading(true);
-		try {
-			await sendPasswordResetEmail(auth, email);
-			toast.success("Password reset email sent!");
-			navigate("/login");
-		} catch (error) {
-			toast.error("Failed to send reset email");
-			throw error;
-		} finally {
-			setLoading(false);
-		}
-	};
 	const resetPassword = async (email) => {
 		setLoading(true);
 		try {
@@ -227,15 +180,9 @@ export const AuthProvider = ({ children }) => {
 			{!loading && children}
 		</AuthContext.Provider>
 	);
-	return (
-		<AuthContext.Provider value={value}>
-			{!loading && children}
-		</AuthContext.Provider>
-	);
 };
 
 AuthProvider.propTypes = {
-	children: PropTypes.node.isRequired,
 	children: PropTypes.node.isRequired,
 };
 
