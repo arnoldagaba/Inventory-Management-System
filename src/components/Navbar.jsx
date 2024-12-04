@@ -91,6 +91,7 @@ const NotificationDropdown = ({ notifications, onClose, isMobile }) => {
 					<h3 className="text-sm font-semibold text-gray-900 dark:text-white">
 						Notifications
 					</h3>
+					
 					<button
 						onClick={handleClick}
 						className="text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"

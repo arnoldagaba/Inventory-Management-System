@@ -107,12 +107,12 @@ const Login = () => {
 						<button
 							type="button"
 							onClick={() => setShowPassword(!showPassword)}
-							className="absolute right-3 top-9 text-gray-400 hover:text-gray-500"
+							className="absolute text-gray-400 right-3 top-9 hover:text-gray-500"
 						>
 							{showPassword ? (
-								<EyeSlashIcon className="h-5 w-5" />
+								<EyeSlashIcon className="w-5 h-5" />
 							) : (
-								<EyeIcon className="h-5 w-5" />
+								<EyeIcon className="w-5 h-5" />
 							)}
 						</button>
 					</div>
@@ -126,12 +126,12 @@ const Login = () => {
 							type="checkbox"
 							checked={rememberMe}
 							onChange={(e) => setRememberMe(e.target.checked)}
-							className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+							className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
 						/>
 
 						<label
 							htmlFor="remember-me"
-							className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
+							className="block ml-2 text-sm text-gray-900 dark:text-gray-300"
 						>
 							Remember me
 						</label>
@@ -146,10 +146,10 @@ const Login = () => {
 				</div>
 
 				<Button type="submit" isLoading={loading} className="w-full">
-					Sign in
+					Login
 				</Button>
 
-				<p className="text-center text-sm text-gray-600 dark:text-gray-400">
+				<p className="text-sm text-center text-gray-600 dark:text-gray-400">
 					Don&apos;t have an account?{" "}
 					<Link
 						to="/signup"

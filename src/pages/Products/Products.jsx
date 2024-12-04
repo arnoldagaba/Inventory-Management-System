@@ -101,7 +101,7 @@ const Products = () => {
 		<Container>
 			<div className="space-y-6">
 				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-					<div className="flex flex-col gap-4 sm:flex-row sm:items-center flex-1 max-w-2xl">
+					<div className="flex flex-col flex-1 max-w-2xl gap-4 sm:flex-row sm:items-center">
 						<Input
 							type="text"
 							placeholder="Search products..."
@@ -110,7 +110,7 @@ const Products = () => {
 							className="w-full sm:w-80"
 						/>
 
-						<div className="relative w-full sm:w-48">
+						<div className="relative w-full sm:w-56">
 							<select
 								value={selectedCategory}
 								onChange={(e) => setSelectedCategory(e.target.value)}
@@ -131,8 +131,9 @@ const Products = () => {
 									</option>
 								))}
 							</select>
-							<div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-								<ChevronDownIcon className="h-4 w-4 text-gray-500" />
+							
+							<div className="absolute inset-y-0 flex items-center pointer-events-none right-2">
+								<ChevronDownIcon className="w-4 h-4 text-gray-500" />
 							</div>
 						</div>
 					</div>
@@ -140,9 +141,9 @@ const Products = () => {
 					<Tooltip content="Create a new product">
 						<Button 
 							onClick={() => toast.info("Add new product")}
-							className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
+							className="w-full text-white bg-blue-600 sm:w-auto hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
 						>
-							<PlusIcon className="h-5 w-5 mr-2" />
+							<PlusIcon className="w-5 h-5 mr-2" />
 							Add Product
 						</Button>
 					</Tooltip>
@@ -177,7 +178,7 @@ const Products = () => {
 												<img
 													src={product.image}
 													alt={product.name}
-													className="h-10 w-10 rounded-lg object-cover"
+													className="object-cover w-10 h-10 rounded-lg"
 												/>
 												<div>
 													<p className="font-medium text-gray-900 dark:text-white">
@@ -218,7 +219,7 @@ const Products = () => {
 														onClick={() => handleView(product)}
 														className="p-1"
 													>
-														<EyeIcon className="h-4 w-4" />
+														<EyeIcon className="w-4 h-4" />
 													</Button>
 												</Tooltip>
 
@@ -229,7 +230,7 @@ const Products = () => {
 														onClick={(e) => handleEdit(e, product)}
 														className="p-1"
 													>
-														<PencilSquareIcon className="h-4 w-4" />
+														<PencilSquareIcon className="w-4 h-4" />
 													</Button>
 												</Tooltip>
 
@@ -240,7 +241,7 @@ const Products = () => {
 														onClick={(e) => handleDelete(e, product)}
 														className="p-1 text-red-600 dark:text-red-400"
 													>
-														<TrashIcon className="h-4 w-4" />
+														<TrashIcon className="w-4 h-4" />
 													</Button>
 												</Tooltip>
 											</div>
@@ -252,7 +253,7 @@ const Products = () => {
 					</div>
 
 					{filteredProducts.length > 0 ? (
-						<div className="mt-4 px-4">
+						<div className="px-4 mt-4">
 							<Pagination
 								currentPage={currentPage}
 								totalPages={totalPages}
@@ -262,7 +263,7 @@ const Products = () => {
 							/>
 						</div>
 					) : (
-						<div className="text-center py-8 text-gray-500 dark:text-gray-400">
+						<div className="py-8 text-center text-gray-500 dark:text-gray-400">
 							No products found matching your search.
 						</div>
 					)}
