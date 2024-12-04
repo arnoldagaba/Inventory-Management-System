@@ -1,8 +1,17 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut,
+	sendPasswordResetEmail,
+	updateProfile as updateFirebaseProfile,
+	onAuthStateChanged,
+	setPersistence,
+	browserLocalPersistence,
+	browserSessionPersistence,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	signOut,
@@ -20,8 +29,14 @@ import {
 	getDownloadURL,
 	deleteObject,
 } from "firebase/storage";
+import {
+	ref,
+	uploadBytes,
+	getDownloadURL,
+	deleteObject,
+} from "firebase/storage";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState(null);
@@ -35,7 +50,16 @@ export const AuthProvider = ({ children }) => {
 			setCurrentUser(user);
 			setLoading(false);
 		});
+	useEffect(() => {
+		console.log("Setting up auth state listener...");
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			console.log("Auth state changed:", user);
+			setCurrentUser(user);
+			setLoading(false);
+		});
 
+		return unsubscribe;
+	}, []);
 		return unsubscribe;
 	}, []);
 
@@ -112,7 +136,30 @@ export const AuthProvider = ({ children }) => {
 			throw error;
 		}
 	};
+	const logout = async () => {
+		try {
+			await signOut(auth);
+			toast.success("Logged out successfully!");
+			navigate("/login");
+		} catch (error) {
+			toast.error("Failed to logout");
+			throw error;
+		}
+	};
 
+	const resetPassword = async (email) => {
+		setLoading(true);
+		try {
+			await sendPasswordResetEmail(auth, email);
+			toast.success("Password reset email sent!");
+			navigate("/login");
+		} catch (error) {
+			toast.error("Failed to send reset email");
+			throw error;
+		} finally {
+			setLoading(false);
+		}
+	};
 	const resetPassword = async (email) => {
 		setLoading(true);
 		try {
@@ -180,8 +227,16 @@ export const AuthProvider = ({ children }) => {
 			{!loading && children}
 		</AuthContext.Provider>
 	);
+	return (
+		<AuthContext.Provider value={value}>
+			{!loading && children}
+		</AuthContext.Provider>
+	);
 };
 
 AuthProvider.propTypes = {
 	children: PropTypes.node.isRequired,
+	children: PropTypes.node.isRequired,
 };
+
+export { AuthContext, AuthProvider };
